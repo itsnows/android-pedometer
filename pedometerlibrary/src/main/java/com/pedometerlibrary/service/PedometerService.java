@@ -57,7 +57,7 @@ public class PedometerService extends BasePedometerService {
 //    private IPedometerAidlInterface.Stub iPedometerAidlInterface = new IPedometerAidlInterface.Stub() {
 //        @Override
 //        public int onStep() throws RemoteException {
-//            return step;
+//            return Step;
 //        }
 //
 //        @Override

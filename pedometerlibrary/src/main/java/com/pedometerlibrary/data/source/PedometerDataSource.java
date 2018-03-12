@@ -1,4 +1,4 @@
-package com.pedometerlibrary.data;
+package com.pedometerlibrary.data.source;
 
 /**
  * Author: SXF

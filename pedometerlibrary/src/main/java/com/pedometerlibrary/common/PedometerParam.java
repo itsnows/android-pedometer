@@ -121,7 +121,7 @@ public class PedometerParam {
         } else {
             editor.putString(key, value.toString());
         }
-        editor.commit();
+        editor.apply();
     }
 
     /**
