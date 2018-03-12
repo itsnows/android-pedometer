@@ -1,0 +1,95 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.pedometerlibrary">
+
+    <!--允许程序读取或写入系统设置-->
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
+
+    <!--允许程序在手机屏幕关闭后后台进程仍然运行-->
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <!--允许程序开机自动运行-->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!--允许程序收到广播后快速收到下一个广播-->
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+
+    <!--允许程序读取加速计传感器-->
+    <uses-feature android:name="android.hardware.sensor.accelerometer" />
+
+    <!--允许程序读取步测计数器传感器-->
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
+        android:required="true" />
+
+    <!--允许程序读取步测检测器传感器-->
+    <uses-feature
+        android:name="android.hardware.sensor.stepdetector"
+        android:required="true" />
+
+    <application
+        android:allowBackup="true"
+        android:label="@string/app_name"
+        android:supportsRtl="true">
+
+        <!--基本的计步器服务-->
+        <service
+            android:name=".service.PedometerService"
+            android:enabled="true"
+            android:exported="true"
+            android:label="@string/action_pedometer_service_label"
+            android:priority="1000"
+            android:process=":pedometerservice">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.intent.action.ACTION_TIME_CHANGED" />
+                <action android:name="android.intent.action.ACTION_TIME_TICK" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
+                <action android:name="com.baidu.android.pushservice.action.PUSH_SERVICE" />
+            </intent-filter>
+        </service>
+
+        <!--程序调度服务-->
+        <service
+            android:name=".service.JobSchedulerService"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+
+        <!--计步器开机广播-->
+        <receiver
+            android:name=".receive.PedometerBootCompleteReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="intent.action.START_UPLOAD_CRASH" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--计步器关机广播-->
+        <receiver
+            android:name=".receive.PedometerShutdownReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="intent.action.START_UPLOAD_CRASH" />
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
+        <!--计步器定时广播-->
+        <receiver
+            android:name=".receive.PedometerAlarmReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.pedometerlibrary.receive.PedometerShutdownReceiver" />
+                <action android:name="com.pedometerlibrary.receive.PedometerShutdownReceiver.ZERO_CLOCK" />
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+</manifest>

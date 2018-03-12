@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="@dimen/notification_pedometer_min_hight">
+
+    <ImageView
+        android:id="@+id/iv_notification_pedometer_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/notification_pedometer_content_left_margin"
+        android:maxHeight="@dimen/notification_pedometer_icon_max_height"
+        android:maxWidth="@dimen/notification_pedometer_icon_max_width"
+        android:scaleType="center"
+        android:src="@android:drawable/sym_def_app_icon" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_notification_pedometer_step"
+            style="@style/TextAppearance.AppCompat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/notification_pedometer_step"
+            android:textColor="@color/notification_pedometer_title_text_color"
+            android:textSize="@dimen/notification_pedometer_title_text_size"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/tv_notification_pedometer_description"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/notification_pedometer_description"
+            android:textColor="@color/notification_pedometer_description_text_color"
+            android:textSize="@dimen/notification_pedometer_description_text_size"
+            android:textStyle="normal" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/tv_notification_pedometer_target_progress"
+        style="@style/TextAppearance.AppCompat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/notification_pedometer_content_right_margin"
+        android:maxHeight="@dimen/notification_pedometer_progressbar_max_height"
+        android:maxWidth="@dimen/notification_pedometer_progressbar_max_width"
+        android:scaleType="center"
+        android:src="@android:drawable/sym_def_app_icon" />
+
+</RelativeLayout>
