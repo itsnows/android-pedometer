@@ -91,7 +91,7 @@ public class PedometerParam {
      * 计步器服务ACTION
      */
     public static String getPedometerServiceAction(Context context) {
-        return (String) get(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, "com.pedometerlibrary.service.PedometerService");
+        return (String) get(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, "com.pedometerlibrary.service.SimplePedometerService");
     }
 
     public static void setPedometerServiceAction(Context context, String pedometerAction) {

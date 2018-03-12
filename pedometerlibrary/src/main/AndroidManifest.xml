@@ -33,14 +33,14 @@
 
         <!--基本的计步器服务-->
         <service
-            android:name=".service.PedometerService"
+            android:name=".service.SimplePedometerService"
             android:enabled="true"
             android:exported="true"
             android:label="@string/action_pedometer_service_label"
             android:priority="1000"
             android:process=":pedometerservice">
             <intent-filter>
-                <action android:name="com.pedometerlibrary.service.PedometerService" />
+                <action android:name="com.pedometerlibrary.service.SimplePedometerService" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />

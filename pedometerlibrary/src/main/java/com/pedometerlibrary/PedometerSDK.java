@@ -4,7 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerManager;
-import com.pedometerlibrary.service.PedometerService;
+import com.pedometerlibrary.service.SimplePedometerService;
 
 /**
  * Author: SXF
@@ -28,7 +28,7 @@ public class PedometerSDK {
      * @param application
      */
     public static void initialize(Application application) {
-        initialize(application, PedometerService.ACTION);
+        initialize(application, SimplePedometerService.ACTION);
     }
 
     /**

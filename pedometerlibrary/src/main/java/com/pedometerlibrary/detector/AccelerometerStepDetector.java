@@ -169,7 +169,7 @@ public class AccelerometerStepDetector implements SensorEventListener {
                 stepListener.onStep(currentAppStep);
             }
         } else {
-            Log.v(TAG, "The device does not support Step sensors");
+            Log.v(TAG, "The device does not support PedometerStep sensors");
             if (stepListener != null) {
                 stepListener.onNotSupported();
             }
