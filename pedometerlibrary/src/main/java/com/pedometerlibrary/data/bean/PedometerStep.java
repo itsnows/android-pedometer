@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class PedometerStep implements Serializable {
 
     /**
-     * 记步主键
+     *ID
      */
     private Long id;
 

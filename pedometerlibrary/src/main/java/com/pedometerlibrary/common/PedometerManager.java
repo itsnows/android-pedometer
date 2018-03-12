@@ -70,7 +70,7 @@ public class PedometerManager {
      */
     public static void setZeroClockAlarm() {
         Intent intent = new Intent(PedometerAlarmReceiver.ACTION_ZERO_CLOCK);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(application, Constant.DEFAULT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(application, PedometerConstants.DEFAULT_REQUEST_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         long alarmTime = DateUtil.getDateZeroTime(DateUtil.getTomorrowDate());
         AlarmManagerUtil.setAlarm(application, alarmTime, pendingIntent);
     }

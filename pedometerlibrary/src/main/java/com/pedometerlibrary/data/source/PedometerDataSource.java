@@ -7,5 +7,7 @@ package com.pedometerlibrary.data.source;
  * <p>
  * PedometerDataSource
  */
-public class PedometerDataSource {
+public interface PedometerDataSource {
+
+
 }

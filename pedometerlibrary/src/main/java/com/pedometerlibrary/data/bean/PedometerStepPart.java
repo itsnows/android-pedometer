@@ -7,19 +7,14 @@ import java.io.Serializable;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/12 15:09
  * <p>
- * PedometerStepInfo
+ * 计步器记步部分
  */
-public class PedometerStepInfo implements Serializable {
+public class PedometerStepPart implements Serializable {
 
     /**
-     * 记步详情主键
+     * ID
      */
     private Long id;
-
-    /**
-     * 记步外键
-     */
-    private Long stepId;
 
     /**
      * 步数
@@ -42,11 +37,6 @@ public class PedometerStepInfo implements Serializable {
     private Double calorie;
 
     /**
-     * 记步设备
-     */
-    private String device;
-
-    /**
      * 标记
      * 0：记录中
      * 1：记录完成
@@ -57,6 +47,11 @@ public class PedometerStepInfo implements Serializable {
      * 同步时间
      */
     private String syncDate;
+
+    /**
+     * 记步设备
+     */
+    private String syncDevice;
 
     /**
      * 创建人
@@ -78,19 +73,18 @@ public class PedometerStepInfo implements Serializable {
      */
     private String lastModifiedDate;
 
-    public PedometerStepInfo() {
+    public PedometerStepPart() {
     }
 
-    public PedometerStepInfo(Long id, Long stepId, Integer step, String date, Double distance, Double calorie, String device, Integer flag, String syncDate, String createdBy, String createdDate, String lastModifiedBy, String lastModifiedDate) {
+    public PedometerStepPart(Long id, Integer step, String date, Double distance, Double calorie, Integer flag, String syncDate, String syncDevice, String createdBy, String createdDate, String lastModifiedBy, String lastModifiedDate) {
         this.id = id;
-        this.stepId = stepId;
         this.step = step;
         this.date = date;
         this.distance = distance;
         this.calorie = calorie;
-        this.device = device;
         this.flag = flag;
         this.syncDate = syncDate;
+        this.syncDevice = syncDevice;
         this.createdBy = createdBy;
         this.createdDate = createdDate;
         this.lastModifiedBy = lastModifiedBy;
@@ -103,14 +97,6 @@ public class PedometerStepInfo implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getStepId() {
-        return stepId;
-    }
-
-    public void setStepId(Long stepId) {
-        this.stepId = stepId;
     }
 
     public Integer getStep() {
@@ -145,14 +131,6 @@ public class PedometerStepInfo implements Serializable {
         this.calorie = calorie;
     }
 
-    public String getDevice() {
-        return device;
-    }
-
-    public void setDevice(String device) {
-        this.device = device;
-    }
-
     public Integer getFlag() {
         return flag;
     }
@@ -167,6 +145,14 @@ public class PedometerStepInfo implements Serializable {
 
     public void setSyncDate(String syncDate) {
         this.syncDate = syncDate;
+    }
+
+    public String getSyncDevice() {
+        return syncDevice;
+    }
+
+    public void setSyncDevice(String syncDevice) {
+        this.syncDevice = syncDevice;
     }
 
     public String getCreatedBy() {
@@ -203,16 +189,15 @@ public class PedometerStepInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "PedometerStepInfo{" +
+        return "PedometerStepPart{" +
                 "id=" + id +
-                ", stepId=" + stepId +
                 ", step=" + step +
                 ", date='" + date + '\'' +
                 ", distance=" + distance +
                 ", calorie=" + calorie +
-                ", device='" + device + '\'' +
                 ", flag=" + flag +
                 ", syncDate='" + syncDate + '\'' +
+                ", syncDevice='" + syncDevice + '\'' +
                 ", createdBy='" + createdBy + '\'' +
                 ", createdDate='" + createdDate + '\'' +
                 ", lastModifiedBy='" + lastModifiedBy + '\'' +

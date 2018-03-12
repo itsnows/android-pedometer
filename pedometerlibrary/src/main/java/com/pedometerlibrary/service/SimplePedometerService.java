@@ -14,7 +14,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.pedometerlibrary.R;
-import com.pedometerlibrary.common.Constant;
+import com.pedometerlibrary.common.PedometerConstants;
 import com.pedometerlibrary.drawable.CircleProgressDrawable;
 
 /**
@@ -114,7 +114,7 @@ public class SimplePedometerService extends BasePedometerService {
      */
     private PendingIntent getDefaultPendingIntent(int flag) {
         Intent intent = new Intent(this, SimplePedometerService.class);
-        PendingIntent pendingIntent = PendingIntent.getService(this, Constant.DEFAULT_REQUEST_CODE, intent, flag);
+        PendingIntent pendingIntent = PendingIntent.getService(this, PedometerConstants.DEFAULT_REQUEST_CODE, intent, flag);
         return pendingIntent;
     }
 

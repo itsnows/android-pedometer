@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.pedometerlibrary">
 
     <!--允许程序读取或写入系统设置-->
@@ -31,14 +32,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <!--基本的计步器服务-->
+        <!--简单计步器服务-->
         <service
             android:name=".service.SimplePedometerService"
             android:enabled="true"
             android:exported="true"
             android:label="@string/action_pedometer_service_label"
             android:priority="1000"
-            android:process=":pedometerservice">
+            android:process=":pedometerservice"
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.pedometerlibrary.service.SimplePedometerService" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -61,7 +63,8 @@
         <receiver
             android:name=".receive.PedometerBootCompleteReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="intent.action.START_UPLOAD_CRASH" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -72,7 +75,8 @@
         <receiver
             android:name=".receive.PedometerShutdownReceiver"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="intent.action.START_UPLOAD_CRASH" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
@@ -89,6 +93,17 @@
                 <action android:name="com.pedometerlibrary.receive.PedometerShutdownReceiver.ZERO_CLOCK" />
             </intent-filter>
         </receiver>
+
+        <!-- 计步器数据提供者 -->
+        <provider
+            android:name="com.pedometerlibrary.data.db.PedometerContentProvider"
+            android:authorities="com.runen.maxhealth.DBContentProvider"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.ruien.maxhealth.app.provider.DBContentProvider" />
+            </intent-filter>
+        </provider>
 
     </application>
 
