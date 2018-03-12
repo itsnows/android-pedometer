@@ -10,6 +10,8 @@ import android.support.annotation.RequiresApi;
 
 import com.pedometerlibrary.common.PedometerManager;
 
+import java.lang.ref.WeakReference;
+
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
@@ -30,7 +32,7 @@ public class JobSchedulerService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
-        jobHandler = new JobHandler();
+        jobHandler = new JobHandler(this);
     }
 
     @Override
@@ -59,20 +61,29 @@ public class JobSchedulerService extends JobService {
     /**
      * 任务处理
      */
-    private class JobHandler extends Handler {
+    private static class JobHandler extends Handler {
+        private WeakReference<JobSchedulerService> weakReference;
+
+        private JobHandler(JobSchedulerService jobSchedulerService) {
+            this.weakReference = new WeakReference<>(jobSchedulerService);
+        }
 
         @Override
         public void handleMessage(Message msg) {
-            super.handleMessage(msg);
+            JobSchedulerService service = weakReference.get();
+            if (service == null) {
+                return;
+            }
             JobParameters jobParameters = (JobParameters) msg.obj;
             switch (msg.what) {
                 case JOB_REBOOT_PEDOMETER_ID:
-                    executeRebootPedometer((Application) getApplicationContext());
-                    jobFinished(jobParameters, false);
+                    service.executeRebootPedometer((Application) service.getApplicationContext());
+                    service.jobFinished(jobParameters, false);
                     break;
                 default:
                     break;
             }
+            super.handleMessage(msg);
         }
     }
 }

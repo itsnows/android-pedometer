@@ -88,7 +88,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器服务ACTION
+     * 计步器服务action
      */
     public static String getPedometerServiceAction(Context context) {
         return (String) get(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, "com.pedometerlibrary.service.SimplePedometerService");
@@ -101,9 +101,9 @@ public class PedometerParam {
     /**
      * 保存参数
      *
-     * @param context
-     * @param key
-     * @param value
+     * @param context Context
+     * @param key     键值
+     * @param value   值
      */
     private static void put(Context context, String key, Object value) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
@@ -127,10 +127,10 @@ public class PedometerParam {
     /**
      * 获取参数
      *
-     * @param context
-     * @param key
-     * @param defaultValue
-     * @return
+     * @param context      Context
+     * @param key          键值
+     * @param defaultValue 默认值
+     * @return 值
      */
     private static Object get(Context context, String key, Object defaultValue) {
         SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);

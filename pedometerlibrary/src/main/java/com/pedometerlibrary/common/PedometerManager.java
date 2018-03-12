@@ -26,16 +26,20 @@ import com.pedometerlibrary.util.IntentUtil;
 
 public class PedometerManager {
     private static final String TAG = PedometerSDK.class.getSimpleName();
-    public static Application application;
+    public Application application;
 
-    public static void setApplication(Application application) {
+    private PedometerManager() {
+    }
+
+    public static PedometerManager newInstance() {
+        return new PedometerManager();
+    }
+
+    public void setApplication(Application application) {
         if (application == null) {
             throw new IllegalArgumentException("context can not be null");
         }
-
-        if (PedometerManager.application == null) {
-            PedometerManager.application = application;
-        }
+        this.application = application;
     }
 
     /**
