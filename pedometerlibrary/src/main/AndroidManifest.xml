@@ -78,8 +78,8 @@
 
         <!-- 计步器数据提供者 -->
         <provider
-            android:name="com.pedometerlibrary.data.db.PedometerContentProvider"
-            android:authorities="com.runen.maxhealth.DBContentProvider"
+            android:name=".data.db.PedometerContentProvider"
+            android:authorities="com.pedometerlibrary.PedometerContentProvider"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

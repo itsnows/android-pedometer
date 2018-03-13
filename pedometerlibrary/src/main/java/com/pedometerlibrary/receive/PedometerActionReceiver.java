@@ -30,16 +30,16 @@ public class PedometerActionReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            executeBootTask(context.getApplicationContext());
+            executeBootTask(context);
             Log.v(TAG, "ACTION_BOOT_COMPLETE");
         } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
-            executeShutdownTask(context.getApplicationContext());
+            executeShutdownTask(context);
             Log.v(TAG, "ACTION_SHUTDOWN");
         } else if (ACTION_ZERO_ALARM_CLOCK.equals(action)) {
-            executeZeroClockTask(context.getApplicationContext());
+            executeZeroClockTask(context);
             Log.v(TAG, "ACTION_ZERO_ALARM_CLOCK");
         } else if (ACTION_ZERO_JOB_SCHEDULER.equals(action)) {
-            executeRebootPedometer(context.getApplicationContext());
+            executeRebootPedometer(context);
             Log.v(TAG, "ACTION_ZERO_JOB_SCHEDULER");
         }
     }

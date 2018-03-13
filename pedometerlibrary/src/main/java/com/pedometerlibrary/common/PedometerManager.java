@@ -40,10 +40,10 @@ public class PedometerManager {
             throw new IllegalArgumentException("Context can not be null");
         }
 
-        if (context instanceof Application) {
+        if (!(context instanceof Application)) {
             throw new RuntimeException("Context must be an application context");
         }
-        this.context = context;
+        this.context = context.getApplicationContext();
     }
 
     /**
