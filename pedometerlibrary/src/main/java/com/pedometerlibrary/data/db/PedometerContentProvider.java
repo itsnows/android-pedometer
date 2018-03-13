@@ -33,7 +33,7 @@ public class PedometerContentProvider extends ContentProvider {
     public boolean onCreate() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, "step", STEP_PATH);
-        uriMatcher.addURI(AUTHORITY, "stepPartdcx", STEPINFO_PATH);
+        uriMatcher.addURI(AUTHORITY, "stepPart", STEPINFO_PATH);
         dbHelper = new PedometerDatabaseHelper(getContext());
         return false;
     }

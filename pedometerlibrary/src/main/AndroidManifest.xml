@@ -57,40 +57,22 @@
         <!--程序调度服务-->
         <service
             android:name=".service.JobSchedulerService"
+            android:enabled="true"
+            android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <!--计步器开机广播-->
+        <!--计步器意图广播-->
         <receiver
-            android:name=".receive.PedometerBootCompleteReceiver"
+            android:name=".receive.PedometerActionReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="intent.action.START_UPLOAD_CRASH" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-
-        <!--计步器关机广播-->
-        <receiver
-            android:name=".receive.PedometerShutdownReceiver"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="intent.action.START_UPLOAD_CRASH" />
                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-            </intent-filter>
-        </receiver>
-
-        <!--计步器定时广播-->
-        <receiver
-            android:name=".receive.PedometerAlarmReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.pedometerlibrary.receive.PedometerShutdownReceiver" />
-                <action android:name="com.pedometerlibrary.receive.PedometerShutdownReceiver.ZERO_CLOCK" />
+                <action android:name="com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_ALARM_CLOCK" />
+                <action android:name="com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER" />
             </intent-filter>
         </receiver>
 

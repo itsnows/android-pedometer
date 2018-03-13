@@ -25,7 +25,7 @@ public class PedometerSDK {
     /**
      * 初始化计步器
      *
-     * @param application
+     * @param application Application
      */
     public static void initialize(Application application) {
         initialize(application, SimplePedometerService.ACTION);
@@ -34,16 +34,17 @@ public class PedometerSDK {
     /**
      * 初始化自定义计步器
      *
-     * @param application
+     * @param application     Application
      * @param pedometerAction 记步器服务隐式意图
      *                        记步器服务必须继承com.pedometerlibrary.service.BasePedometerService
      */
     public static void initialize(Application application, String pedometerAction) {
-        PedometerManager.setApplication(application);
-        PedometerManager.setPedometerServiceAction(pedometerAction);
-        PedometerManager.setZeroClockAlarm();
-        PedometerManager.setJobScheduler();
-        PedometerManager.startPedometerService();
+        PedometerManager pedometerManager = PedometerManager.newInstance();
+        pedometerManager.setApplication(application);
+        pedometerManager.setPedometerAction(pedometerAction);
+        pedometerManager.setJobScheduler();
+        pedometerManager.setAlarmClock();
+        pedometerManager.startPedometer();
         Log.v(TAG, "PedometerSDK initialized");
     }
 

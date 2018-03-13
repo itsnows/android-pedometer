@@ -88,13 +88,13 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器服务action
+     * 计步器Action
      */
-    public static String getPedometerServiceAction(Context context) {
+    public static String getPedometerAction(Context context) {
         return (String) get(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, "com.pedometerlibrary.service.SimplePedometerService");
     }
 
-    public static void setPedometerServiceAction(Context context, String pedometerAction) {
+    public static void setPedometerAction(Context context, String pedometerAction) {
         put(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, pedometerAction);
     }
 

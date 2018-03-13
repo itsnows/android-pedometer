@@ -1,14 +1,15 @@
 package com.pedometerlibrary.service;
 
-import android.app.Application;
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
-import com.pedometerlibrary.common.PedometerManager;
+import com.pedometerlibrary.receive.PedometerActionReceiver;
 
 import java.lang.ref.WeakReference;
 
@@ -22,6 +23,7 @@ import java.lang.ref.WeakReference;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobSchedulerService extends JobService {
+    private static final String TAG = JobSchedulerService.class.getSimpleName();
     public static final int JOB_REBOOT_PEDOMETER_ID = 0x1201;
 
     /**
@@ -33,6 +35,13 @@ public class JobSchedulerService extends JobService {
     public void onCreate() {
         super.onCreate();
         jobHandler = new JobHandler(this);
+        Log.d(TAG, "onCreate");
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStartCommand");
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -40,22 +49,15 @@ public class JobSchedulerService extends JobService {
         Message message = Message.obtain(jobHandler, params.getJobId());
         message.obj = params;
         jobHandler.sendMessage(message);
+        Log.d(TAG, "onStartJob");
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
         jobHandler.removeMessages(params.getJobId());
+        Log.d(TAG, "onStopJob");
         return false;
-    }
-
-    /**
-     * 执行重启计步器
-     */
-    private void executeRebootPedometer(Application application) {
-        PedometerManager.setApplication(application);
-        PedometerManager.setJobScheduler();
-        PedometerManager.startPedometerService();
     }
 
     /**
@@ -77,7 +79,7 @@ public class JobSchedulerService extends JobService {
             JobParameters jobParameters = (JobParameters) msg.obj;
             switch (msg.what) {
                 case JOB_REBOOT_PEDOMETER_ID:
-                    service.executeRebootPedometer((Application) service.getApplicationContext());
+                    service.sendBroadcast(new Intent(PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER));
                     service.jobFinished(jobParameters, false);
                     break;
                 default:

@@ -29,4 +29,7 @@ public class PedometerService extends BasePedometerService {
     public IBinder onBind(Intent intent) {
         return null;
     }
+
+
+
 }
