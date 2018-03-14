@@ -23,17 +23,21 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
 
 public class PedometerContentProvider extends ContentProvider {
     private static final String TAG = PedometerContentProvider.class.getSimpleName();
-    private static final String AUTHORITY = "com.pedometerlibrary.PedometerContentProvider";
-    private static final int STEP_PATH = 0;
-    private static final int STEPINFO_PATH = 1;
+    public static final String SEPARATOR = "/";
+    public static final String SCHEME = "content";
+    public static final String AUTHORITY = "com.pedometerlibrary.PedometerContentProvider";
+    public static final String STEP_PATH = "step";
+    public static final String STEP_PART_PATH = "stepPart";
+    public static final int STEP_CODE = 0;
+    public static final int STEP_PART_CODE = 1;
     private UriMatcher uriMatcher;
     private PedometerDatabaseHelper dbHelper;
 
     @Override
     public boolean onCreate() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(AUTHORITY, "step", STEP_PATH);
-        uriMatcher.addURI(AUTHORITY, "stepPart", STEPINFO_PATH);
+        uriMatcher.addURI(AUTHORITY, STEP_PATH, STEP_CODE);
+        uriMatcher.addURI(AUTHORITY, STEP_PART_PATH, STEP_PART_CODE);
         dbHelper = new PedometerDatabaseHelper(getContext());
         return false;
     }
@@ -50,10 +54,10 @@ public class PedometerContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor cursor = null;
         switch (uriMatcher.match(uri)) {
-            case STEP_PATH:
+            case STEP_CODE:
                 cursor = db.query(PedometerPersistenceContract.StepEntry.TABLE_NAME, columns, selection, selectionArgs, null, null, sortOrder);
                 break;
-            case STEPINFO_PATH:
+            case STEP_PART_CODE:
                 cursor = db.query(PedometerPersistenceContract.StepPartEntry.TABLE_NAME, columns, selection, selectionArgs, null, null, sortOrder);
                 break;
             default:
@@ -67,11 +71,11 @@ public class PedometerContentProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         String type = null;
         switch (uriMatcher.match(uri)) {
-            case STEP_PATH:
+            case STEP_CODE:
                 type = "vnd.android.cursor.dir/step";
                 break;
-            case STEPINFO_PATH:
-                type = "vnd.android.cursor.dir/stepinfo";
+            case STEP_PART_CODE:
+                type = "vnd.android.cursor.dir/stepPart";
                 break;
             default:
                 throw new IllegalArgumentException("Unkwon Uri:" + uri.toString());
@@ -86,11 +90,11 @@ public class PedometerContentProvider extends ContentProvider {
         Uri insertUri = null;
         long id = -1;
         switch (uriMatcher.match(uri)) {
-            case STEP_PATH:
+            case STEP_CODE:
                 id = db.insert(PedometerPersistenceContract.StepEntry.TABLE_NAME, null, contentValues);
                 insertUri = ContentUris.withAppendedId(uri, id);
                 break;
-            case STEPINFO_PATH:
+            case STEP_PART_CODE:
                 id = db.insert(PedometerPersistenceContract.StepPartEntry.TABLE_NAME, null, contentValues);
                 insertUri = ContentUris.withAppendedId(uri, id);
                 break;
@@ -105,10 +109,10 @@ public class PedometerContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count = 0;
         switch (uriMatcher.match(uri)) {
-            case STEP_PATH:
+            case STEP_CODE:
                 count = db.delete(PedometerPersistenceContract.StepEntry.TABLE_NAME, selection, selectionArgs);
                 break;
-            case STEPINFO_PATH:
+            case STEP_PART_CODE:
                 count = db.delete(PedometerPersistenceContract.StepPartEntry.TABLE_NAME, selection, selectionArgs);
                 break;
             default:
@@ -122,10 +126,10 @@ public class PedometerContentProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         int count = 0;
         switch (uriMatcher.match(uri)) {
-            case STEP_PATH:
+            case STEP_CODE:
                 count = db.update(PedometerPersistenceContract.StepEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
-            case STEPINFO_PATH:
+            case STEP_PART_CODE:
                 count = db.update(PedometerPersistenceContract.StepPartEntry.TABLE_NAME, contentValues, selection, selectionArgs);
                 break;
             default:

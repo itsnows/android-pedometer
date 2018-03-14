@@ -84,6 +84,7 @@
             android:exported="false">
             <intent-filter>
                 <action android:name="com.ruien.maxhealth.app.provider.DBContentProvider" />
+                <data android:scheme="" />
             </intent-filter>
         </provider>
 

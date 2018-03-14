@@ -27,8 +27,8 @@ public class PedometerPersistenceContract {
     public static abstract class StepPartEntry {
         public static final String TABLE_NAME = "step";
         public static final String COLUMN_NAME_ID = "id";
+        public static final String COLUMN_NAME_STEP_ID = "step_id";
         public static final String COLUMN_NAME_STEP = "step";
-        public static final String COLUMN_NAME_DATE = "date";
         public static final String COLUMN_NAME_DISTANCE = "distance";
         public static final String COLUMN_NAME_CALORIE = "calorie";
         public static final String COLUMN_NAME_FLAG = "flag";

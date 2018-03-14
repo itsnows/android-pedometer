@@ -23,7 +23,7 @@ public class PedometerDatabaseHelper extends SQLiteOpenHelper {
      */
     private static final String SQL_CREATE_STEP = "CREATE TABLE IF NOT EXISTS " +
             PedometerPersistenceContract.StepEntry.TABLE_NAME + " (" +
-            PedometerPersistenceContract.StepEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
+            PedometerPersistenceContract.StepEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_STEP + " INTEGER," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_DATE + " TEXT," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_DISTANCE + " DOUBLE," +
@@ -41,15 +41,14 @@ public class PedometerDatabaseHelper extends SQLiteOpenHelper {
      */
     private static final String SQL_CREATE_STEP_SPART = "CREATE TABLE IF NOT EXISTS " +
             PedometerPersistenceContract.StepPartEntry.TABLE_NAME + " (" +
-            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_ID + " TEXT PRIMARY KEY," +
+            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_ID + " INTEGER PRIMARY KEY," +
+            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_STEP_ID + " INTEGER," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_STEP + " INTEGER," +
-            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_DATE + " TEXT," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_DISTANCE + " DOUBLE," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_CALORIE + " DOUBLE," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_FLAG + " INTEGER," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_SYNC_DATE + " TEXT," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_SYNC_DEVICE + " TEXT," +
-            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_DATE + " TEXT," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_CREATED_BY + " VARCHER(50)," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_CREATED_DATE + " TEXT," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_BY + " VARCHER(50)," +

@@ -1,6 +1,7 @@
 package com.pedometerlibrary.data.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Author: SXF

@@ -17,14 +17,14 @@ public class PedometerStepPart implements Serializable {
     private Long id;
 
     /**
+     * 记步ID
+     */
+    private Long stepId;
+
+    /**
      * 步数
      */
     private Integer step;
-
-    /**
-     * 日期
-     */
-    private String date;
 
     /**
      * 里程 单位：（米）
@@ -76,10 +76,10 @@ public class PedometerStepPart implements Serializable {
     public PedometerStepPart() {
     }
 
-    public PedometerStepPart(Long id, Integer step, String date, Double distance, Double calorie, Integer flag, String syncDate, String syncDevice, String createdBy, String createdDate, String lastModifiedBy, String lastModifiedDate) {
+    public PedometerStepPart(Long id, Long stepId, Integer step, Double distance, Double calorie, Integer flag, String syncDate, String syncDevice, String createdBy, String createdDate, String lastModifiedBy, String lastModifiedDate) {
         this.id = id;
+        this.stepId = stepId;
         this.step = step;
-        this.date = date;
         this.distance = distance;
         this.calorie = calorie;
         this.flag = flag;
@@ -99,20 +99,20 @@ public class PedometerStepPart implements Serializable {
         this.id = id;
     }
 
+    public Long getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(Long stepId) {
+        this.stepId = stepId;
+    }
+
     public Integer getStep() {
         return step;
     }
 
     public void setStep(Integer step) {
         this.step = step;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
     }
 
     public Double getDistance() {
@@ -191,8 +191,8 @@ public class PedometerStepPart implements Serializable {
     public String toString() {
         return "PedometerStepPart{" +
                 "id=" + id +
+                ", stepId=" + stepId +
                 ", step=" + step +
-                ", date='" + date + '\'' +
                 ", distance=" + distance +
                 ", calorie=" + calorie +
                 ", flag=" + flag +
