@@ -7,9 +7,11 @@
     tools:context="com.pedometer.MainActivity">
 
     <TextView
+        android:id="@+id/tv_activity_main_step"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:text="@string/activity_main_step"
+        android:textSize="56dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

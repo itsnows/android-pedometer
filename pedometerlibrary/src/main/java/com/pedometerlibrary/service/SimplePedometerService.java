@@ -1,5 +1,6 @@
 package com.pedometerlibrary.service;
 
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -15,7 +16,7 @@ import android.widget.RemoteViews;
 
 import com.pedometerlibrary.R;
 import com.pedometerlibrary.common.PedometerConstants;
-import com.pedometerlibrary.drawable.CircleProgressDrawable;
+import com.pedometerlibrary.widget.CircleProgressDrawable;
 
 /**
  * Author: SXF
@@ -24,7 +25,7 @@ import com.pedometerlibrary.drawable.CircleProgressDrawable;
  * <p>
  * SimplePedometerService
  */
-
+@SuppressLint("WrongConstant")
 public class SimplePedometerService extends BasePedometerService {
     public static final String ACTION = "com.pedometerlibrary.service.SimplePedometerService";
     private static final String TAG = SimplePedometerService.class.getSimpleName();
@@ -79,7 +80,7 @@ public class SimplePedometerService extends BasePedometerService {
      * 初始化通知栏
      */
     private void initNotify() {
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_pedometer);
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_simple_pedometer);
         builder = new NotificationCompat.Builder(this);
         startForeground(NOTIFY_ID, builder.build());
         builder.setWhen(System.currentTimeMillis())
@@ -98,14 +99,15 @@ public class SimplePedometerService extends BasePedometerService {
     /**
      * 设置通知栏
      */
+    @SuppressLint("RestrictedApi")
     public void setNotify() {
         RemoteViews remoteViews = builder.getContentView();
-        remoteViews.setTextViewText(R.id.tv_notification_pedometer_step, getString(R.string.notification_pedometer_step, String.valueOf(step)));
-        remoteViews.setTextViewText(R.id.tv_notification_pedometer_description, getString(R.string.notification_pedometer_description));
+        remoteViews.setTextViewText(R.id.tv_notification_simple_pedometer_title, getString(R.string.notification_simple_pedometer_title, String.valueOf(getStep())));
+        remoteViews.setTextViewText(R.id.tv_notification_simple_pedometer_description, getString(R.string.notification_simple_pedometer_description));
         CircleProgressDrawable circleProgressDrawable = new CircleProgressDrawable(getResources());
         circleProgressDrawable.setMaxProgress(target);
-        circleProgressDrawable.setCurrentProgress(step);
-        remoteViews.setImageViewBitmap(R.id.tv_notification_pedometer_target_progress, circleProgressDrawable.getBitmap());
+        circleProgressDrawable.setCurrentProgress(getStep());
+        remoteViews.setImageViewBitmap(R.id.tv_notification_simple_pedometer_target_progress, circleProgressDrawable.getBitmap());
         notifyManager.notify(NOTIFY_ID, builder.build());
     }
 

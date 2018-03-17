@@ -55,12 +55,12 @@ public abstract class BasePedometerService extends Service {
     /**
      * 步测器步数
      */
-    protected int step;
+    private int step;
 
     /**
-     * 步行状态
+     * 步测器步行状态
      */
-    protected boolean isPause;
+    private boolean isPause;
 
     /**
      * 步测器管理
@@ -128,10 +128,27 @@ public abstract class BasePedometerService extends Service {
     }
 
     /**
+     * 步测器步数
+     *
+     * @return 步测器当前系统日期步数
+     */
+    public int getStep() {
+        return step;
+    }
+
+    /**
+     * 步测器步行状态
+     *
+     * @return true 步行中 false 步行暂停
+     */
+    public boolean isPause() {
+        return isPause;
+    }
+
+    /**
      * 获取屏幕锁
      *
-     * @param context
-     * @return
+     * @param context Context
      */
     private void acquireWakeLock(Context context) {
         releaseWakeLock();

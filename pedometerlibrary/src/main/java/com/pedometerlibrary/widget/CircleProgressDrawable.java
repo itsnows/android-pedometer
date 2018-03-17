@@ -1,4 +1,4 @@
-package com.pedometerlibrary.drawable;
+package com.pedometerlibrary.widget;
 
 import android.content.res.Resources;
 import android.graphics.Bitmap;

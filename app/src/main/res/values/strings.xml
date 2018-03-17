@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">android-pedometer</string>
+    <string name="activity_main_step">%1$d步</string>
 </resources>

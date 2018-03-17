@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="notification_pedometer_min_hight">64dp</dimen>
-    <dimen name="notification_pedometer_content_left_margin">8dp</dimen>
-    <dimen name="notification_pedometer_content_right_margin">8dp</dimen>
-    <dimen name="notification_pedometer_icon_max_width">48dp</dimen>
-    <dimen name="notification_pedometer_icon_max_height">48dp</dimen>
-    <dimen name="notification_pedometer_progressbar_max_width">48dp</dimen>
-    <dimen name="notification_pedometer_progressbar_max_height">48dp</dimen>
-    <dimen name="notification_pedometer_title_text_size">20sp</dimen>
-    <dimen name="notification_pedometer_description_text_size">14sp</dimen>
+    <dimen name="notification_simple_pedometer_min_hight">64dp</dimen>
+    <dimen name="notification_simple_pedometer_content_left_margin">8dp</dimen>
+    <dimen name="notification_simple_pedometer_content_right_margin">8dp</dimen>
+    <dimen name="notification_simple_pedometer_icon_max_width">48dp</dimen>
+    <dimen name="notification_simple_pedometer_icon_max_height">48dp</dimen>
+    <dimen name="notification_simple_pedometer_progressbar_max_width">48dp</dimen>
+    <dimen name="notification_simple_pedometer_progressbar_max_height">48dp</dimen>
+    <dimen name="notification_simple_pedometer_title_text_size">20sp</dimen>
+    <dimen name="notification_simple_pedometer_description_text_size">14sp</dimen>
 </resources>

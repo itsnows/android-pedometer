@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="notification_pedometer_title_text_color">#9E9E9E</color>
-    <color name="notification_pedometer_description_text_color">#9E9E9E</color>
+    <color name="notification_simple_pedometer_title_text_color">#9E9E9E</color>
+    <color name="notification_simple_pedometer_description_text_color">#9E9E9E</color>
 </resources>

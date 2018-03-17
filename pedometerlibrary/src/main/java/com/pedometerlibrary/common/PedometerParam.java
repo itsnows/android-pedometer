@@ -11,7 +11,7 @@ import android.content.SharedPreferences;
  * 计步器参数
  */
 
-public class PedometerParam {
+public final class PedometerParam {
     private static final String FILE_NAME = "pedometer";
     private static final String KEY_NAME_CURRENT_APP_STEP = "current_app_step";
     private static final String KEY_NAME_LAST_SENSOR_STEP = "last_sensor_step";
@@ -19,7 +19,10 @@ public class PedometerParam {
     private static final String KEY_NAME_LAST_OFFSET_STEP = "last_offset_step";
     private static final String KEY_NAME_SYSTEM_BOOT_TIME = "system_boot_time";
     private static final String KEY_NAME_SYSTEM_REBOOT_STATUS = "system_reboot_status";
-    private static final String KEY_NAME_PEDOMETER_SERVICE_ACTION = "pedometer_service_action";
+    private static final String KEY_NAME_PEDOMETER_ACTION = "pedometer_action";
+    private static final String KEY_NAME_PEDOMETER_NOTIFY_ENABLED = "pedometer_notify_enabled";
+    private static final String KEY_NAME_PEDOMETER_NOTIFY_THEME = "pedometer_notify_theme";
+    private static final String KEY_NAME_PEDOMETER_NOTIFY_TARGET = "pedometer_notify_target";
 
     /**
      * 当前App步数
@@ -87,15 +90,49 @@ public class PedometerParam {
         put(context, KEY_NAME_SYSTEM_REBOOT_STATUS, status);
     }
 
+
     /**
      * 计步器Action
      */
     public static String getPedometerAction(Context context) {
-        return (String) get(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, "com.pedometerlibrary.service.SimplePedometerService");
+        return (String) get(context, KEY_NAME_PEDOMETER_ACTION, "com.pedometerlibrary.service.SimplePedometerService");
     }
 
     public static void setPedometerAction(Context context, String pedometerAction) {
-        put(context, KEY_NAME_PEDOMETER_SERVICE_ACTION, pedometerAction);
+        put(context, KEY_NAME_PEDOMETER_ACTION, pedometerAction);
+    }
+
+    /**
+     * 计步器通知栏
+     */
+    public static boolean isPedometerNotifyEnabled(Context context) {
+        return (boolean) get(context, KEY_NAME_PEDOMETER_NOTIFY_ENABLED, false);
+    }
+
+    public static void setPedometerNotifyEnabled(Context context, boolean enabled) {
+        put(context, KEY_NAME_PEDOMETER_NOTIFY_ENABLED, enabled);
+    }
+
+    /**
+     * 计步器通知栏主题
+     */
+    public static int getPedometerNotifyTheme(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFY_THEME, 0);
+    }
+
+    public static void setPedometerNotifyTheme(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_NOTIFY_THEME, value);
+    }
+
+    /**
+     * 计步器通知栏目标
+     */
+    public static int getPedometerNotifyTarget(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFY_TARGET, 7000);
+    }
+
+    public static void setPedometerNotifyTarget(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_NOTIFY_TARGET, value);
     }
 
     /**

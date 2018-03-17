@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">PedometerLibrary</string>
     <string name="action_pedometer_service_label">计步器服务</string>
-    <string name="notification_pedometer_step">%1$s步</string>
-    <string name="notification_pedometer_description">今日步数</string>
+    <string name="notification_simple_pedometer_title">%1$d步</string>
+    <string name="notification_simple_pedometer_description">今日步数</string>
 </resources>

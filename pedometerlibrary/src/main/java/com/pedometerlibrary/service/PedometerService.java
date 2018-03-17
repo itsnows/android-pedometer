@@ -1,28 +1,33 @@
 package com.pedometerlibrary.service;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Color;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.widget.RemoteViews;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
+import com.pedometerlibrary.R;
+import com.pedometerlibrary.common.PedometerParam;
 import com.pedometerlibrary.receive.PedometerNotifyActionReceiver;
 import com.pedometerlibrary.util.IntentUtil;
+import com.pedometerlibrary.widget.NotifyThme;
+import com.pedometerlibrary.widget.SimplePedometerNotification;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Author: SXF
@@ -39,19 +44,24 @@ public class PedometerService extends BasePedometerService {
     public static final String ACTION = "com.pedometerlibrary.service.PedometerService";
 
     /**
+     * 记步服务同步数据隐式意图
+     */
+    public static final String ACTION_SYNC = "com.pedometerlibrary.service.PedometerService.ACTION_SYNC";
+
+    /**
+     * 记步服务目标设置隐式意图
+     */
+    public static final String ACTION_TARGET = "com.pedometerlibrary.service.PedometerService.ACTION_TARGET";
+
+    /**
      * 服务端消息
      */
     public static final int MSG_SERVER = 0x1033;
 
     /**
-     * 客服端连接消息
+     * 客服端消息
      */
-    public static final int MSG_CLINT_CONNECT = 0x1034;
-
-    /**
-     * 客服端断开连接消息
-     */
-    public static final int MSG_CLINT_DISCONNECT = 0x1035;
+    public static final int MSG_CLINT = 0x1034;
 
     /**
      * 通知栏ID
@@ -61,8 +71,7 @@ public class PedometerService extends BasePedometerService {
     /**
      * 记步通知栏
      */
-    private Notification notification;
-    private NotificationManager notifyManager;
+    private SimplePedometerNotification spNotification;
 
     /**
      * 记步通知栏意图广播
@@ -74,6 +83,21 @@ public class PedometerService extends BasePedometerService {
      */
     private Messenger serverMessenger;
 
+    /**
+     * 客户端
+     */
+    private List<Messenger> clentMessengers;
+
+    /**
+     * 主题
+     */
+    private NotifyThme theme;
+
+    /**
+     * 目標
+     */
+    private int target;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -82,6 +106,9 @@ public class PedometerService extends BasePedometerService {
 
     private void init() {
         serverMessenger = new Messenger(new ServeHanlder(this));
+        theme = NotifyThme.matched(PedometerParam.getPedometerNotifyTheme(this));
+        target = PedometerParam.getPedometerNotifyTarget(this);
+        initNotify();
     }
 
     /**
@@ -89,39 +116,45 @@ public class PedometerService extends BasePedometerService {
      */
     @SuppressWarnings("deprecation")
     private void initNotify() {
-        notifyManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.notification_runenpedometer);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(String.valueOf(NOTIFY_ID), getString(R.string.app_name), NotificationManager.IMPORTANCE_DEFAULT);
-            channel.enableLights(true);
-            channel.setLightColor(Color.GREEN);
-            channel.setShowBadge(true);
-            channel.setSound(null, null);
-            channel.setVibrationPattern(null);
-            notifyManager.createNotificationChannel(channel);
-            notification = new Notification.Builder(getApplicationContext(), String.valueOf(NOTIFY_ID))
-                    .setWhen(System.currentTimeMillis())
-                    .setContentIntent(getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setPriority(Notification.PRIORITY_MAX)
-                    .setAutoCancel(false)
-                    .setOngoing(true)
-                    .setDefaults(Notification.FLAG_AUTO_CANCEL)
-                    .setSmallIcon(android.R.mipmap.icon)
-                    .setCustomBigContentView(remoteViews)
-                    .setCustomContentView(remoteViews)
-                    .build();
-        } else {
-            notification = new NotificationCompat.Builder(this)
-                    .setWhen(System.currentTimeMillis())
-                    .setContentIntent(getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT))
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setAutoCancel(false)
-                    .setOngoing(true)
-                    .setDefaults(Notification.FLAG_AUTO_CANCEL)
-                    .setSmallIcon(R.mipmap.icon)
-                    .setCustomBigContentView(remoteViews)
-                    .setCustomContentView(remoteViews)
-                    .build();
+        switch (theme) {
+            case SIMPLE:
+                spNotification = SimplePedometerNotification.with(this, NOTIFY_ID)
+                        .setContentIntent((getPendingIntent(PendingIntent.FLAG_UPDATE_CURRENT)))
+                        .setIcon(android.R.drawable.sym_def_app_icon)
+                        .setTitle(getString(R.string.notification_simple_pedometer_title, 0))
+                        .setTitleColor(ContextCompat.getColor(this, R.color.notification_simple_pedometer_title_text_color))
+                        .setTitleSize(getResources().getDimensionPixelOffset(R.dimen.notification_simple_pedometer_title_text_size))
+                        .setDescription(getString(R.string.notification_simple_pedometer_description))
+                        .setDescriptionColor(ContextCompat.getColor(this, R.color.notification_simple_pedometer_description_text_color))
+                        .setDescriptionSize(getResources().getDimensionPixelOffset(R.dimen.notification_simple_pedometer_description_text_size))
+                        .setMaxProgress(target)
+                        .setCurrentProgress(0);
+                spNotification.notifyChanged();
+                break;
+            case MINUTE:
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 设置通知栏
+     */
+    public void setNotify() {
+        switch (theme) {
+            case SIMPLE:
+                int tempProgress = (int) ((float) getStep() / target * 100);
+                int progress = (int) ((float) spNotification.getCurrentProgress() / spNotification.getMaxProgress() * 100);
+                if (tempProgress > progress) {
+                    spNotification.setCurrentProgress(getStep());
+                    spNotification.notifyChanged();
+                }
+                break;
+            case MINUTE:
+                break;
+            default:
+                break;
         }
     }
 
@@ -132,8 +165,40 @@ public class PedometerService extends BasePedometerService {
         return PendingIntent.getBroadcast(this, 0, new Intent(this, PedometerNotifyActionReceiver.class), flag);
     }
 
+    /**
+     * 发送消息
+     */
+    private void sendMsgToClient(String tag) {
+        if (clentMessengers == null) {
+            return;
+        }
+        Message message = Message.obtain();
+        message.what = MSG_SERVER;
+        Bundle bundle = new Bundle();
+        bundle.putString("tag", tag);
+        try {
+            Iterator<Messenger> iterator = clentMessengers.iterator();
+            while (iterator.hasNext()) {
+                Messenger messenger = iterator.next();
+                if (messenger == null) {
+                    iterator.remove();
+                    break;
+                }
+
+                if ("step".equals(tag)) {
+                    bundle.putInt("step", getStep());
+                }
+                message.setData(bundle);
+                messenger.send(message);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onStep() {
+
 
     }
 
@@ -145,6 +210,36 @@ public class PedometerService extends BasePedometerService {
     @Override
     public IBinder onBind(Intent intent) {
         return serverMessenger.getBinder();
+    }
+
+    /**
+     * 计步器控制广播
+     */
+    private class PedometerServiceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                Log.d(TAG, "SCREEN ON");
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                Log.d(TAG, "SCREEN OFF");
+            } else if (Intent.ACTION_DATE_CHANGED.equals(action)) {
+                Log.d(TAG, "ACTION_DATE_CHANGED");
+            } else if (Intent.ACTION_TIME_CHANGED.equals(action)) {
+                Log.d(TAG, "ACTION_TIME_CHANGED");
+            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
+                Log.d(TAG, "ACTION_TIME_TICK");
+            } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
+                Log.d(TAG, "ACTION_CLOSE_SYSTEM_DIALOGS");
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                Log.d(TAG, "ACTION_SHUTDOWN");
+            } else if (ACTION_SYNC.equals(action)) {
+                Log.d(TAG, "ACTION_SYNC");
+            } else if (ACTION_TARGET.equals(action)) {
+                Log.d(TAG, "ACTION_TARGET");
+            }
+        }
     }
 
     /**
@@ -164,9 +259,32 @@ public class PedometerService extends BasePedometerService {
                 return;
             }
             switch (msg.what) {
-                case MSG_CLINT_CONNECT:
-                    break;
-                case MSG_CLINT_DISCONNECT:
+                case MSG_CLINT:
+                    Messenger clintMessenger = msg.replyTo;
+                    if (service.clentMessengers == null) {
+                        service.clentMessengers = new ArrayList<>(0);
+                    }
+                    String tag = msg.getData().getString("tag");
+                    if ("connect".equals(tag)) {
+                        if (!service.clentMessengers.contains(clintMessenger)) {
+                            service.clentMessengers.add(clintMessenger);
+                            try {
+                                Message message = Message.obtain();
+                                message.what = MSG_SERVER;
+                                Bundle bundle = new Bundle();
+                                bundle.putInt("step", service.getStep());
+                                message.setData(bundle);
+                                clintMessenger.send(message);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        return;
+                    }
+                    if ("disconnect".equals(tag)) {
+
+                        return;
+                    }
                     break;
                 default:
                     break;
@@ -180,6 +298,7 @@ public class PedometerService extends BasePedometerService {
      */
     public static class Client {
         private Activity activity;
+        private CallBack callBack;
 
         /**
          * 远程服务端
@@ -212,8 +331,9 @@ public class PedometerService extends BasePedometerService {
             }
         };
 
-        private Client(Activity activity) {
+        private Client(Activity activity, CallBack callBack) {
             this.activity = activity;
+            this.callBack = callBack;
             Intent intent = IntentUtil.createExplicitFromImplicitIntent(activity, new Intent(PedometerService.ACTION));
             activity.bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT);
 
@@ -227,7 +347,7 @@ public class PedometerService extends BasePedometerService {
         public static class ClientHanlder extends Handler {
             private WeakReference<Client> weakReference;
 
-            public ClientHanlder(Client client) {
+            private ClientHanlder(Client client) {
                 weakReference = new WeakReference<>(client);
             }
 
@@ -239,7 +359,19 @@ public class PedometerService extends BasePedometerService {
                 }
                 switch (msg.what) {
                     case PedometerService.MSG_SERVER:
-                        client.isConnect = true;
+                        if (!client.isConnect) {
+                            client.isConnect = true;
+                        }
+                        if (client.callBack != null) {
+                            Bundle bundle = msg.getData();
+                            String tag = bundle.getString("tag");
+                            if ("step".equals(tag)) {
+                                int step = bundle.getInt("step", 0);
+                                client.callBack.onStep(step);
+                            }
+
+
+                        }
                         break;
                     default:
                         break;
@@ -248,11 +380,26 @@ public class PedometerService extends BasePedometerService {
             }
         }
 
-        public static Client add(Activity activity) {
+        public static Client add(Activity activity, CallBack callBack) {
             if (activity == null) {
                 throw new IllegalArgumentException("Context can not be null");
             }
-            return new Client(activity);
+            return new Client(activity, callBack);
+        }
+
+        public void sync() {
+
+
+        }
+
+        public void target(int target) {
+            if (activity == null) {
+                if (callBack != null) {
+                    callBack.onTarget(target);
+                }
+                return;
+            }
+            activity.sendBroadcast(new Intent(ACTION_TARGET));
         }
 
         public void remove() {
@@ -272,7 +419,10 @@ public class PedometerService extends BasePedometerService {
             try {
                 Message message = Message.obtain();
                 message.replyTo = clientMessenger;
-                message.what = MSG_CLINT_CONNECT;
+                message.what = MSG_CLINT;
+                Bundle bundle = new Bundle();
+                bundle.putString("tag", "connect");
+                message.setData(bundle);
                 serverMessenger.send(message);
             } catch (RemoteException e) {
                 e.printStackTrace();
@@ -285,12 +435,34 @@ public class PedometerService extends BasePedometerService {
         private void disconnectServer() {
             try {
                 Message message = Message.obtain();
-                message.what = MSG_CLINT_DISCONNECT;
+                message.what = MSG_CLINT;
+                Bundle bundle = new Bundle();
+                bundle.putString("tag", "disconnect");
+                message.setData(bundle);
                 serverMessenger.send(message);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
             isConnect = false;
+        }
+    }
+
+    /**
+     * 计步服务回调接口
+     */
+    public static abstract class CallBack {
+
+        // 计步探测器
+        public abstract void onStep(int step);
+
+        // 同步数据
+        public void onSync(int isSucceed) {
+
+        }
+
+        // 同步目标
+        public void onTarget(int target) {
+
         }
 
     }
