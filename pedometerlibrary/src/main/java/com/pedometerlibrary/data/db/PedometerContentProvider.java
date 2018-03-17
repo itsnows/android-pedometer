@@ -22,7 +22,6 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
  */
 
 public class PedometerContentProvider extends ContentProvider {
-    private static final String TAG = PedometerContentProvider.class.getSimpleName();
     public static final String SEPARATOR = "/";
     public static final String SCHEME = "content";
     public static final String AUTHORITY = "com.pedometerlibrary.PedometerContentProvider";
@@ -30,6 +29,7 @@ public class PedometerContentProvider extends ContentProvider {
     public static final String STEP_PART_PATH = "stepPart";
     public static final int STEP_CODE = 0;
     public static final int STEP_PART_CODE = 1;
+    private static final String TAG = PedometerContentProvider.class.getSimpleName();
     private UriMatcher uriMatcher;
     private PedometerDatabaseHelper dbHelper;
 

@@ -23,9 +23,8 @@ import java.lang.ref.WeakReference;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class JobSchedulerService extends JobService {
-    private static final String TAG = JobSchedulerService.class.getSimpleName();
     public static final int JOB_REBOOT_PEDOMETER_ID = 0x1201;
-
+    private static final String TAG = JobSchedulerService.class.getSimpleName();
     /**
      * 任务处理
      */

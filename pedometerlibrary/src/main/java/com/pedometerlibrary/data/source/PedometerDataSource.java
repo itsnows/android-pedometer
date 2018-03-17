@@ -16,13 +16,6 @@ import java.util.List;
  */
 public interface PedometerDataSource {
 
-    interface GetSourceCallback<T> {
-
-        void onDataLoaded(T t);
-
-        void onDataNotAvailable(String message);
-    }
-
     void putStep(@NonNull String date, @NonNull PedometerStep pedometerStep, @NonNull GetSourceCallback<String> callback);
 
     void getStep(@NonNull String date, @NonNull GetSourceCallback<PedometerStep> callback);
@@ -34,5 +27,12 @@ public interface PedometerDataSource {
     void getStepPart(@NonNull Long stepId, @NonNull GetSourceCallback<List<PedometerStepPart>> callback);
 
     void removeStepPart(@NonNull Long stepId, @NonNull GetSourceCallback<String> callback);
+
+    interface GetSourceCallback<T> {
+
+        void onDataLoaded(T t);
+
+        void onDataNotAvailable(String message);
+    }
 
 }

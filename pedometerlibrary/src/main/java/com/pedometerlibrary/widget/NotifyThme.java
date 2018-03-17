@@ -13,7 +13,6 @@ public enum NotifyThme {
     MINUTE();
 
 
-
     public static NotifyThme matched(int theme) {
         if (theme == 0) {
             return SIMPLE;

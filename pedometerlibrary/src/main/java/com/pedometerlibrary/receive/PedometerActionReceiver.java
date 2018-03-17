@@ -15,16 +15,15 @@ import com.pedometerlibrary.common.PedometerManager;
  * PedometerActionReceiver
  */
 public class PedometerActionReceiver extends BroadcastReceiver {
-    private static final String TAG = PedometerActionReceiver.class.getSimpleName();
     /**
      * 零点闹钟
      */
     public static final String ACTION_ZERO_ALARM_CLOCK = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_ALARM_CLOCK";
-
     /**
      * 零点工作
      */
     public static final String ACTION_ZERO_JOB_SCHEDULER = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER";
+    private static final String TAG = PedometerActionReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

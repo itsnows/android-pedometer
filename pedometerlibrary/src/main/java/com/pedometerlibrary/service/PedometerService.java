@@ -37,32 +37,27 @@ import java.util.List;
  * PedometerService
  */
 public class PedometerService extends BasePedometerService {
-    private static final String TAG = PedometerService.class.getSimpleName();
     /**
      * 记步服务隐式意图
      */
     public static final String ACTION = "com.pedometerlibrary.service.PedometerService";
-
     /**
      * 记步服务同步数据隐式意图
      */
     public static final String ACTION_SYNC = "com.pedometerlibrary.service.PedometerService.ACTION_SYNC";
-
     /**
      * 记步服务目标设置隐式意图
      */
     public static final String ACTION_TARGET = "com.pedometerlibrary.service.PedometerService.ACTION_TARGET";
-
     /**
      * 服务端消息
      */
     public static final int MSG_SERVER = 0x1033;
-
     /**
      * 客服端消息
      */
     public static final int MSG_CLINT = 0x1034;
-
+    private static final String TAG = PedometerService.class.getSimpleName();
     /**
      * 通知栏ID
      */
@@ -213,36 +208,6 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步器控制广播
-     */
-    private class PedometerServiceReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (Intent.ACTION_SCREEN_ON.equals(action)) {
-                Log.d(TAG, "SCREEN ON");
-            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-                Log.d(TAG, "SCREEN OFF");
-            } else if (Intent.ACTION_DATE_CHANGED.equals(action)) {
-                Log.d(TAG, "ACTION_DATE_CHANGED");
-            } else if (Intent.ACTION_TIME_CHANGED.equals(action)) {
-                Log.d(TAG, "ACTION_TIME_CHANGED");
-            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
-                Log.d(TAG, "ACTION_TIME_TICK");
-            } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
-                Log.d(TAG, "ACTION_CLOSE_SYSTEM_DIALOGS");
-            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
-                Log.d(TAG, "ACTION_SHUTDOWN");
-            } else if (ACTION_SYNC.equals(action)) {
-                Log.d(TAG, "ACTION_SYNC");
-            } else if (ACTION_TARGET.equals(action)) {
-                Log.d(TAG, "ACTION_TARGET");
-            }
-        }
-    }
-
-    /**
      * 服务端消息处理
      */
     private static class ServeHanlder extends Handler {
@@ -341,45 +306,6 @@ public class PedometerService extends BasePedometerService {
             clientMessenger = new Messenger(clientHanlder);
         }
 
-        /**
-         * 客服端消息处理
-         */
-        public static class ClientHanlder extends Handler {
-            private WeakReference<Client> weakReference;
-
-            private ClientHanlder(Client client) {
-                weakReference = new WeakReference<>(client);
-            }
-
-            @Override
-            public void handleMessage(Message msg) {
-                Client client = weakReference.get();
-                if (client == null) {
-                    return;
-                }
-                switch (msg.what) {
-                    case PedometerService.MSG_SERVER:
-                        if (!client.isConnect) {
-                            client.isConnect = true;
-                        }
-                        if (client.callBack != null) {
-                            Bundle bundle = msg.getData();
-                            String tag = bundle.getString("tag");
-                            if ("step".equals(tag)) {
-                                int step = bundle.getInt("step", 0);
-                                client.callBack.onStep(step);
-                            }
-
-
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                super.handleMessage(msg);
-            }
-        }
-
         public static Client add(Activity activity, CallBack callBack) {
             if (activity == null) {
                 throw new IllegalArgumentException("Context can not be null");
@@ -445,6 +371,45 @@ public class PedometerService extends BasePedometerService {
             }
             isConnect = false;
         }
+
+        /**
+         * 客服端消息处理
+         */
+        public static class ClientHanlder extends Handler {
+            private WeakReference<Client> weakReference;
+
+            private ClientHanlder(Client client) {
+                weakReference = new WeakReference<>(client);
+            }
+
+            @Override
+            public void handleMessage(Message msg) {
+                Client client = weakReference.get();
+                if (client == null) {
+                    return;
+                }
+                switch (msg.what) {
+                    case PedometerService.MSG_SERVER:
+                        if (!client.isConnect) {
+                            client.isConnect = true;
+                        }
+                        if (client.callBack != null) {
+                            Bundle bundle = msg.getData();
+                            String tag = bundle.getString("tag");
+                            if ("step".equals(tag)) {
+                                int step = bundle.getInt("step", 0);
+                                client.callBack.onStep(step);
+                            }
+
+
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                super.handleMessage(msg);
+            }
+        }
     }
 
     /**
@@ -465,6 +430,36 @@ public class PedometerService extends BasePedometerService {
 
         }
 
+    }
+
+    /**
+     * 计步器控制广播
+     */
+    private class PedometerServiceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                Log.d(TAG, "SCREEN ON");
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                Log.d(TAG, "SCREEN OFF");
+            } else if (Intent.ACTION_DATE_CHANGED.equals(action)) {
+                Log.d(TAG, "ACTION_DATE_CHANGED");
+            } else if (Intent.ACTION_TIME_CHANGED.equals(action)) {
+                Log.d(TAG, "ACTION_TIME_CHANGED");
+            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
+                Log.d(TAG, "ACTION_TIME_TICK");
+            } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
+                Log.d(TAG, "ACTION_CLOSE_SYSTEM_DIALOGS");
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                Log.d(TAG, "ACTION_SHUTDOWN");
+            } else if (ACTION_SYNC.equals(action)) {
+                Log.d(TAG, "ACTION_SYNC");
+            } else if (ACTION_TARGET.equals(action)) {
+                Log.d(TAG, "ACTION_TARGET");
+            }
+        }
     }
 
 }
