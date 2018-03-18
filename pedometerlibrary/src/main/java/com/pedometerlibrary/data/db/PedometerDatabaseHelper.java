@@ -30,11 +30,10 @@ public class PedometerDatabaseHelper extends SQLiteOpenHelper {
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_CALORIE + " DOUBLE," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_SYNC_DATE + " TEXT," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_SYNC_DEVICE + " TEXT," +
-            PedometerPersistenceContract.StepEntry.COLUMN_NAME_DATE + " TEXT," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_CREATED_BY + " VARCHER(50)," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_CREATED_DATE + " TEXT," +
             PedometerPersistenceContract.StepEntry.COLUMN_NAME_LAST_MODIFIED_BY + " VARCHER(50)," +
-            PedometerPersistenceContract.StepEntry.COLUMN_NAME_LAST_MODIFIED_DATE + "  TEXT)";
+            PedometerPersistenceContract.StepEntry.COLUMN_NAME_LAST_MODIFIED_DATE + " TEXT)";
 
     /**
      * 记步部分表
@@ -52,7 +51,7 @@ public class PedometerDatabaseHelper extends SQLiteOpenHelper {
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_CREATED_BY + " VARCHER(50)," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_CREATED_DATE + " TEXT," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_BY + " VARCHER(50)," +
-            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_DATE + "  TEXT)";
+            PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_DATE + " TEXT)";
 
     public PedometerDatabaseHelper(Context context) {
         this(context, DATABASE_NAME, null, DATABASE_VERSION);
