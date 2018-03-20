@@ -10,8 +10,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pedometerlibrary.PedometerSDK;
-import com.pedometerlibrary.receive.PedometerActionReceiver;
-import com.pedometerlibrary.service.JobSchedulerService;
+import com.pedometerlibrary.receive.PedometerAlarmReceiver;
+import com.pedometerlibrary.service.PedometerJobSchedulerService;
 import com.pedometerlibrary.util.AlarmManagerUtil;
 import com.pedometerlibrary.util.DateUtil;
 import com.pedometerlibrary.util.IntentUtil;
@@ -61,7 +61,7 @@ public class PedometerManager {
     public void setAlarmClock() {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 PedometerConstants.DEFAULT_REQUEST_CODE,
-                new Intent(PedometerActionReceiver.ACTION_ZERO_ALARM_CLOCK),
+                new Intent(PedometerAlarmReceiver.ACTION_ZERO_ALARM_CLOCK),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         long alarmTime = DateUtil.getDateZeroTime(DateUtil.getTomorrowDate());
         AlarmManagerUtil.setAlarm(context, alarmTime, pendingIntent);
@@ -76,8 +76,8 @@ public class PedometerManager {
             long executeTime = tomorrowZeroTime - DateUtil.getSystemTime();
             JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
             if (jobScheduler != null) {
-                ComponentName componentName = new ComponentName(context.getPackageName(), JobSchedulerService.class.getName());
-                JobInfo jobInfo = new JobInfo.Builder(JobSchedulerService.JOB_REBOOT_PEDOMETER_ID, componentName)
+                ComponentName componentName = new ComponentName(context.getPackageName(), PedometerJobSchedulerService.class.getName());
+                JobInfo jobInfo = new JobInfo.Builder(PedometerJobSchedulerService.JOB_REBOOT_PEDOMETER_ID, componentName)
                         .setMinimumLatency(executeTime)
                         .setOverrideDeadline(executeTime)
                         .setPersisted(false)
@@ -87,7 +87,7 @@ public class PedometerManager {
                         .build();
                 int request = jobScheduler.schedule(jobInfo);
                 if (request > 0) {
-                    Log.v(TAG, "JobScheduler：JobSchedulerService.JOB_REBOOT_PEDOMETER_ID");
+                    Log.v(TAG, "JobScheduler：PedometerJobSchedulerService.JOB_REBOOT_PEDOMETER_ID");
                     return;
                 }
             }

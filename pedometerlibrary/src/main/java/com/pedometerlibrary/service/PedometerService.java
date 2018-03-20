@@ -19,7 +19,7 @@ import android.util.Log;
 
 import com.pedometerlibrary.R;
 import com.pedometerlibrary.common.PedometerParam;
-import com.pedometerlibrary.receive.PedometerNotifyActionReceiver;
+import com.pedometerlibrary.receive.PedometerStatusActionReceiver;
 import com.pedometerlibrary.util.IntentUtil;
 import com.pedometerlibrary.widget.NotifyThme;
 import com.pedometerlibrary.widget.SimplePedometerNotification;
@@ -71,7 +71,7 @@ public class PedometerService extends BasePedometerService {
     /**
      * 记步通知栏意图广播
      */
-    private PedometerNotifyActionReceiver pedometerNotifyActionReceiver;
+    private PedometerStatusActionReceiver pedometerStatusActionReceiver;
 
     /**
      * 记步服务端
@@ -157,7 +157,7 @@ public class PedometerService extends BasePedometerService {
      * 通知意图
      */
     private PendingIntent getPendingIntent(int flag) {
-        return PendingIntent.getBroadcast(this, 0, new Intent(this, PedometerNotifyActionReceiver.class), flag);
+        return PendingIntent.getBroadcast(this, 0, new Intent(this, PedometerStatusActionReceiver.class), flag);
     }
 
     /**

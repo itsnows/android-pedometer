@@ -24,7 +24,7 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
 public class PedometerContentProvider extends ContentProvider {
     public static final String SEPARATOR = "/";
     public static final String SCHEME = "content";
-    public static final String AUTHORITY = "com.pedometerlibrary.PedometerContentProvider";
+    public static final String AUTHORITY = "com.pedometerlibrary.ContentProvider";
     public static final String STEP_PATH = "step";
     public static final String STEP_PART_PATH = "stepPart";
     public static final int STEP_CODE = 0;

@@ -11,11 +11,11 @@ import android.util.Log;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/13 15:39
  * <p>
- * PedometerNotifyActionReceiver
+ * 计步器状态活动广播
  */
-public abstract class PedometerNotifyActionReceiver extends BroadcastReceiver {
-    public static final String TAG = PedometerNotifyActionReceiver.class.getSimpleName();
-    public static final String ACTION = "com.pedometerlibrary.receive.PedometerNotifyActionReceiver";
+public abstract class PedometerStatusActionReceiver extends BroadcastReceiver {
+    public static final String TAG = PedometerStatusActionReceiver.class.getSimpleName();
+    public static final String ACTION = "com.pedometerlibrary.receive.PedometerStatusActionReceiver";
 
     @Override
     public final void onReceive(Context context, Intent intent) {

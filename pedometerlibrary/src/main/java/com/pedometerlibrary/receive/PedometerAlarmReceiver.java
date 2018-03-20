@@ -10,11 +10,12 @@ import com.pedometerlibrary.common.PedometerManager;
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
- * CreatedTime: 2018/3/13 9:25
+ * CreatedTime: 2018/3/20 11:45
  * <p>
- * PedometerActionReceiver
+ * PedometerAlarmReceiver
  */
-public class PedometerActionReceiver extends BroadcastReceiver {
+public class PedometerAlarmReceiver extends BroadcastReceiver {
+    private static final String TAG = PedometerAlarmReceiver.class.getSimpleName();
     /**
      * 零点闹钟
      */
@@ -23,46 +24,17 @@ public class PedometerActionReceiver extends BroadcastReceiver {
      * 零点工作
      */
     public static final String ACTION_ZERO_JOB_SCHEDULER = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER";
-    private static final String TAG = PedometerActionReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            executeBootTask(context);
-            Log.v(TAG, "ACTION_BOOT_COMPLETE");
-        } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
-            executeShutdownTask(context);
-            Log.v(TAG, "ACTION_SHUTDOWN");
-        } else if (ACTION_ZERO_ALARM_CLOCK.equals(action)) {
+        if (ACTION_ZERO_ALARM_CLOCK.equals(action)) {
             executeZeroClockTask(context);
-            Log.v(TAG, "ACTION_ZERO_ALARM_CLOCK");
+            Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_ALARM_CLOCK");
         } else if (ACTION_ZERO_JOB_SCHEDULER.equals(action)) {
             executeRebootPedometer(context);
-            Log.v(TAG, "ACTION_ZERO_JOB_SCHEDULER");
+            Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_JOB_SCHEDULER");
         }
-    }
-
-    /**
-     * 执行开机任务
-     */
-    private void executeBootTask(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
-        pedometerManager.setAlarmClock();
-        pedometerManager.setJobScheduler();
-        pedometerManager.startPedometer();
-    }
-
-    /**
-     * 执行关机任务
-     */
-    private void executeShutdownTask(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
-        pedometerManager.setAlarmClock();
-        pedometerManager.setJobScheduler();
-        pedometerManager.startPedometer();
     }
 
     /**
@@ -84,5 +56,4 @@ public class PedometerActionReceiver extends BroadcastReceiver {
         pedometerManager.setJobScheduler();
         pedometerManager.startPedometer();
     }
-
 }

@@ -22,9 +22,9 @@ import java.lang.ref.WeakReference;
  */
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class JobSchedulerService extends JobService {
+public class PedometerJobSchedulerService extends JobService {
     public static final int JOB_REBOOT_PEDOMETER_ID = 0x1201;
-    private static final String TAG = JobSchedulerService.class.getSimpleName();
+    private static final String TAG = PedometerJobSchedulerService.class.getSimpleName();
     /**
      * 任务处理
      */
@@ -63,15 +63,15 @@ public class JobSchedulerService extends JobService {
      * 任务处理
      */
     private static class JobHandler extends Handler {
-        private WeakReference<JobSchedulerService> weakReference;
+        private WeakReference<PedometerJobSchedulerService> weakReference;
 
-        private JobHandler(JobSchedulerService jobSchedulerService) {
-            this.weakReference = new WeakReference<>(jobSchedulerService);
+        private JobHandler(PedometerJobSchedulerService pedometerJobSchedulerService) {
+            this.weakReference = new WeakReference<>(pedometerJobSchedulerService);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            JobSchedulerService service = weakReference.get();
+            PedometerJobSchedulerService service = weakReference.get();
             if (service == null) {
                 return;
             }

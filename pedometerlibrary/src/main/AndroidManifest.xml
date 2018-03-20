@@ -32,6 +32,41 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
+        <!--计步器开机广播-->
+        <receiver
+            android:name=".receive.PedometerBootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <!--计步器关机广播-->
+        <receiver
+            android:name=".receive.PedometerShutdownReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
+        <!--计步器警报广播-->
+        <receiver
+            android:name=".receive.PedometerAlarmReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="intent.action.START_UPLOAD_CRASH" />
+                <action android:name="com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_ZERO_ALARM_CLOCK" />
+                <action android:name="com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_ZERO_JOB_SCHEDULER" />
+            </intent-filter>
+        </receiver>
+
         <!--简单计步器服务-->
         <service
             android:name=".service.SimplePedometerService"
@@ -54,27 +89,12 @@
             </intent-filter>
         </service>
 
-        <!--程序调度服务-->
+        <!--计步器程序调度服务-->
         <service
-            android:name=".service.JobSchedulerService"
+            android:name=".service.PedometerJobSchedulerService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
-        <!--计步器意图广播-->
-        <receiver
-            android:name=".receive.PedometerActionReceiver"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="intent.action.START_UPLOAD_CRASH" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-                <action android:name="com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_ALARM_CLOCK" />
-                <action android:name="com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER" />
-            </intent-filter>
-        </receiver>
 
         <!-- 计步器数据提供者 -->
         <provider
@@ -83,8 +103,7 @@
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.ruien.maxhealth.app.provider.DBContentProvider" />
-                <data android:scheme="" />
+                <action android:name="com.pedometerlibrary.ContentProvider" />
             </intent-filter>
         </provider>
 
