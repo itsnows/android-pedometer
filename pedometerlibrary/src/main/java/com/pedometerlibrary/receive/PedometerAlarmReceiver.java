@@ -15,7 +15,6 @@ import com.pedometerlibrary.common.PedometerManager;
  * PedometerAlarmReceiver
  */
 public class PedometerAlarmReceiver extends BroadcastReceiver {
-    private static final String TAG = PedometerAlarmReceiver.class.getSimpleName();
     /**
      * 零点闹钟
      */
@@ -24,6 +23,7 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
      * 零点工作
      */
     public static final String ACTION_ZERO_JOB_SCHEDULER = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER";
+    private static final String TAG = PedometerAlarmReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {

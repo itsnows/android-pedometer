@@ -9,7 +9,7 @@ import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-import com.pedometerlibrary.receive.PedometerActionReceiver;
+import com.pedometerlibrary.receive.PedometerAlarmReceiver;
 
 import java.lang.ref.WeakReference;
 
@@ -78,7 +78,7 @@ public class PedometerJobSchedulerService extends JobService {
             JobParameters jobParameters = (JobParameters) msg.obj;
             switch (msg.what) {
                 case JOB_REBOOT_PEDOMETER_ID:
-                    service.sendBroadcast(new Intent(PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER));
+                    service.sendBroadcast(new Intent(PedometerAlarmReceiver.ACTION_ZERO_JOB_SCHEDULER));
                     service.jobFinished(jobParameters, false);
                     break;
                 default:
