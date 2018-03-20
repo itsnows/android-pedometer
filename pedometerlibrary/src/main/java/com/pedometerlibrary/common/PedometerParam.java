@@ -11,7 +11,7 @@ import android.content.SharedPreferences;
  * 计步器参数
  */
 
-public final class PedometerParam {
+public class PedometerParam {
     private static final String FILE_NAME = "pedometer";
     private static final String KEY_NAME_CURRENT_APP_STEP = "current_app_step";
     private static final String KEY_NAME_LAST_SENSOR_STEP = "last_sensor_step";
@@ -20,9 +20,8 @@ public final class PedometerParam {
     private static final String KEY_NAME_SYSTEM_BOOT_TIME = "system_boot_time";
     private static final String KEY_NAME_SYSTEM_REBOOT_STATUS = "system_reboot_status";
     private static final String KEY_NAME_PEDOMETER_ACTION = "pedometer_action";
-    private static final String KEY_NAME_PEDOMETER_NOTIFY_ENABLED = "pedometer_notify_enabled";
-    private static final String KEY_NAME_PEDOMETER_NOTIFY_THEME = "pedometer_notify_theme";
-    private static final String KEY_NAME_PEDOMETER_NOTIFY_TARGET = "pedometer_notify_target";
+    private static final String KEY_NAME_PEDOMETER_TARGET = "pedometer_target";
+    private static final String KEY_NAME_PEDOMETER_NOTIFICATION = "pedometer_notification";
 
     /**
      * 当前App步数
@@ -90,7 +89,6 @@ public final class PedometerParam {
         put(context, KEY_NAME_SYSTEM_REBOOT_STATUS, status);
     }
 
-
     /**
      * 计步器Action
      */
@@ -103,36 +101,25 @@ public final class PedometerParam {
     }
 
     /**
-     * 计步器通知栏
+     * 计步器通知栏目标
      */
-    public static boolean isPedometerNotifyEnabled(Context context) {
-        return (boolean) get(context, KEY_NAME_PEDOMETER_NOTIFY_ENABLED, false);
+    public static int getPedometerTarget(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_TARGET, 7000);
     }
 
-    public static void setPedometerNotifyEnabled(Context context, boolean enabled) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFY_ENABLED, enabled);
+    public static void setPedometerTarget(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_TARGET, value);
     }
 
     /**
      * 计步器通知栏主题
      */
-    public static int getPedometerNotifyTheme(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFY_THEME, 0);
+    public static int getPedometerNotification(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION, 1);
     }
 
-    public static void setPedometerNotifyTheme(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFY_THEME, value);
-    }
-
-    /**
-     * 计步器通知栏目标
-     */
-    public static int getPedometerNotifyTarget(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFY_TARGET, 7000);
-    }
-
-    public static void setPedometerNotifyTarget(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFY_TARGET, value);
+    public static void setPedometerNotification(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_NOTIFICATION, value);
     }
 
     /**

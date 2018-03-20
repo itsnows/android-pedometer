@@ -140,13 +140,11 @@ public class SimplePedometerService extends BasePedometerService {
 
     @Override
     public void onNotSupported() {
-        // ...
     }
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-//        return iPedometerAidlInterface.asBinder();
         return null;
     }
 

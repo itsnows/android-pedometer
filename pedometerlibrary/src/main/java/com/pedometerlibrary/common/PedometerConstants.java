@@ -16,22 +16,28 @@ public class PedometerConstants {
     public static final int DEFAULT_REQUEST_CODE = 0x0000;
 
     /**
-     * 正常模式启动计步器
+     * 连接记步服务请求码
      */
-    public static final int PEDOMETER_START_MODE_STANDARD = 0x1024;
+    public static final int REQUEST_CODE_CONNECT = 0x5230;
 
     /**
-     * 凌晨零点模式启动计步器
+     * 断开连接记步服务请求码
      */
-    public static final int PEDOMETER_START_MODE_MIDNIGHT = 0x1025;
+    public static final int REQUEST_CODE_DISCONNECT = 0x5231;
 
     /**
-     * 开机模式启动计步器
+     * 计步状态空白通知栏（不显示通知栏）
      */
-    public static final int PEDOMETER_START_MODE_BOOT = 0x1026;
+    public static final int PEDOMETER_NOTIFICATION_EMPTY = 0;
 
     /**
-     * 未知模式启动计步器
+     * 计步状态简单通知栏
      */
-    public static final int PEDOMETER_START_MODE_UNKNOWN = 0x1027;
+    public static final int PEDOMETER_NOTIFICATION_SIMPLE = 1;
+
+    /**
+     * 计步状态全面通知栏
+     */
+    public static final int PEDOMETER_NOTIFICATION_MINUTE = 2;
+
 }

@@ -1,6 +1,5 @@
 package com.pedometerlibrary.widget;
 
-import android.app.Notification;
 import android.support.v4.app.NotificationCompat;
 
 /**
@@ -18,15 +17,6 @@ public abstract class PedometerNotification {
      * @return NotificationCompat.Builder
      */
     public abstract NotificationCompat.Builder getBuilder();
-
-    /**
-     * 获取通知栏
-     *
-     * @return Notification
-     */
-    public Notification getNotification() {
-        return getBuilder().build();
-    }
 
     /**
      * 通知通知栏

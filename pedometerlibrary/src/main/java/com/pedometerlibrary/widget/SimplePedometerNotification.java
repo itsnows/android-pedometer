@@ -22,7 +22,7 @@ import com.pedometerlibrary.util.PackageManagerUtil;
  * <p>
  * SimplePedometerNotification
  */
-public class SimplePedometerNotification {
+public class SimplePedometerNotification extends PedometerNotification {
     private Context context;
     private RemoteViews remoteViews;
     private NotificationCompat.Builder builder;
@@ -107,7 +107,7 @@ public class SimplePedometerNotification {
      * @param size
      */
     public SimplePedometerNotification setTitleSize(float size) {
-        remoteViews.setTextViewTextSize(R.id.tv_notification_simple_pedometer_title, TypedValue.COMPLEX_UNIT_SP, size);
+        remoteViews.setTextViewTextSize(R.id.tv_notification_simple_pedometer_title, TypedValue.COMPLEX_UNIT_PX, size);
         return this;
     }
 
@@ -137,7 +137,7 @@ public class SimplePedometerNotification {
      * @param size
      */
     public SimplePedometerNotification setDescriptionSize(float size) {
-        remoteViews.setTextViewTextSize(R.id.tv_notification_simple_pedometer_description, TypedValue.COMPLEX_UNIT_SP, size);
+        remoteViews.setTextViewTextSize(R.id.tv_notification_simple_pedometer_description, TypedValue.COMPLEX_UNIT_PX, size);
         return this;
     }
 
@@ -215,15 +215,6 @@ public class SimplePedometerNotification {
     }
 
     /**
-     * 获取进度条最大进度
-     *
-     * @return
-     */
-    public int getMaxProgress() {
-        return drawable.getMaxProgress();
-    }
-
-    /**
      * 设置进度条最大大进度
      *
      * @param maxProgress
@@ -232,15 +223,6 @@ public class SimplePedometerNotification {
         drawable.setMaxProgress(maxProgress);
         setProgress();
         return this;
-    }
-
-    /**
-     * 获取进度条当前进度
-     *
-     * @return
-     */
-    public int getCurrentProgress() {
-        return drawable.getCurrentProgress();
     }
 
     /**
@@ -255,33 +237,45 @@ public class SimplePedometerNotification {
     }
 
     /**
+     * 获取进度条最大进度
+     *
+     * @return
+     */
+    public int getMaxProgress() {
+        return drawable.getMaxProgress();
+    }
+
+    /**
+     * 获取进度条当前进度
+     *
+     * @return
+     */
+    public int getCurrentProgress() {
+        return drawable.getCurrentProgress();
+    }
+
+    /**
      * 获取通知栏构建者
      *
      * @return NotificationCompat.Builder
      */
+    @Override
     public NotificationCompat.Builder getBuilder() {
         return builder;
     }
 
     /**
-     * 获取通知栏
-     *
-     * @return Notification
-     */
-    public Notification getNotification() {
-        return builder.build();
-    }
-
-    /**
      * 通知通知栏
      */
+    @Override
     public void notifyChanged() {
-        notifyManager.notify(id, getNotification());
+        notifyManager.notify(id, getBuilder().build());
     }
 
     /**
      * 取消通知栏
      */
+    @Override
     public void cancel() {
         notifyManager.cancel(id);
     }
