@@ -5,8 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.pedometerlibrary.PedometerSDK;
+import com.pedometerlibrary.Pedometer;
 import com.pedometerlibrary.common.PedometerOptions;
+import com.pedometerlibrary.util.SystemUtil;
 
 /**
  * Author: SXF
@@ -16,12 +17,23 @@ import com.pedometerlibrary.common.PedometerOptions;
  * App
  */
 public class App extends Application {
+    private static final String PROCESS_PEDOMETER = "com.pedometer";
 
     @Override
     public void onCreate() {
         super.onCreate();
+        String processName = SystemUtil.getProcessName(this);
+        if (PROCESS_PEDOMETER.equals(processName)) {
+            initDefault();
+            // initCustom();
+        }
+    }
 
-        PedometerSDK.initialize(this,
+    /**
+     * 默认记步器
+     */
+    private void initDefault() {
+        Pedometer.initialize(this,
                 new PedometerOptions.Builder()
                         .setSamllIcon(R.mipmap.ic_launcher)
                         .setLargeIcon(R.mipmap.ic_launcher)
@@ -38,5 +50,11 @@ public class App extends Application {
                         .build());
     }
 
+    /**
+     * 自定义计步器
+     */
+    private void initCustom() {
+        Pedometer.initialize(this, CustomPedometerService.ACTION);
+    }
 
 }

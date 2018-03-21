@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.pedometerlibrary.PedometerSDK;
 import com.pedometerlibrary.common.PedometerClient;
 import com.pedometerlibrary.service.PedometerService;
 

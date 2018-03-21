@@ -67,28 +67,6 @@
             </intent-filter>
         </receiver>
 
-        <!--简单计步器服务-->
-        <service
-            android:name=".service.SimplePedometerService"
-            android:enabled="true"
-            android:exported="true"
-            android:label="@string/action_pedometer_service_label"
-            android:priority="1000"
-            android:process=":pedometerservice"
-            tools:ignore="ExportedService">
-            <intent-filter>
-                <action android:name="com.pedometerlibrary.service.SimplePedometerService" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.DATE_CHANGED" />
-                <action android:name="android.intent.action.MEDIA_MOUNTED" />
-                <action android:name="android.intent.action.USER_PRESENT" />
-                <action android:name="android.intent.action.ACTION_TIME_CHANGED" />
-                <action android:name="android.intent.action.ACTION_TIME_TICK" />
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
-            </intent-filter>
-        </service>
-
         <!--计步器服务-->
         <service
             android:name=".service.PedometerService"

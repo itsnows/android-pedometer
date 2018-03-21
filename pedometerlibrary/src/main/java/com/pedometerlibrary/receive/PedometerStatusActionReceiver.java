@@ -13,25 +13,20 @@ import android.util.Log;
  * <p>
  * 计步器状态活动广播
  */
-public abstract class PedometerStatusActionReceiver extends BroadcastReceiver {
+public class PedometerStatusActionReceiver extends BroadcastReceiver {
     public static final String TAG = PedometerStatusActionReceiver.class.getSimpleName();
     public static final String ACTION = "com.pedometerlibrary.receive.PedometerStatusActionReceiver";
 
     @Override
-    public final void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (ACTION.equals(action)) {
-            onAction(context);
+
+
+
         }
         Log.d(TAG, action);
     }
-
-    /**
-     * 记步状态通知栏意图
-     *
-     * @param context Context
-     */
-    public abstract void onAction(Context context);
 
     /**
      * 注册广播

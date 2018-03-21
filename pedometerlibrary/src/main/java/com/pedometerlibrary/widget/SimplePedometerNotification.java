@@ -1,11 +1,8 @@
 package com.pedometerlibrary.widget;
 
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.ColorInt;
 import android.support.annotation.DrawableRes;
 import android.support.v4.app.NotificationCompat;
@@ -13,7 +10,6 @@ import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 import com.pedometerlibrary.R;
-import com.pedometerlibrary.util.PackageManagerUtil;
 
 /**
  * Author: SXF
@@ -23,39 +19,17 @@ import com.pedometerlibrary.util.PackageManagerUtil;
  * SimplePedometerNotification
  */
 public class SimplePedometerNotification extends PedometerNotification {
-    private Context context;
     private RemoteViews remoteViews;
-    private NotificationCompat.Builder builder;
-    private NotificationManager notifyManager;
     private CircleProgressDrawable drawable;
-    private int id;
 
-    private SimplePedometerNotification(Context context, int id) {
-        this.context = context;
-        this.id = id;
+    public SimplePedometerNotification(Context context, int id) {
+        super(context, id);
         init();
     }
 
-    public static SimplePedometerNotification with(Context context, int id) {
-        return new SimplePedometerNotification(context, id);
-    }
-
     private void init() {
-        notifyManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        remoteViews = new RemoteViews(context.getPackageName(), R.layout.notification_simple_pedometer);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(String.valueOf(id), PackageManagerUtil.getAppName(context), NotificationManager.IMPORTANCE_DEFAULT);
-            channel.enableLights(true);
-            channel.setLightColor(Color.GREEN);
-            channel.setShowBadge(true);
-            channel.setSound(null, null);
-            channel.setVibrationPattern(null);
-            notifyManager.createNotificationChannel(channel);
-            builder = new NotificationCompat.Builder(context, String.valueOf(id));
-        } else {
-            builder = new NotificationCompat.Builder(context);
-        }
-        builder.setWhen(System.currentTimeMillis())
+        remoteViews = new RemoteViews(getContext().getPackageName(), R.layout.notification_simple_pedometer);
+        getBuilder().setWhen(System.currentTimeMillis())
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setAutoCancel(false)
                 .setOngoing(true)
@@ -63,11 +37,17 @@ public class SimplePedometerNotification extends PedometerNotification {
                 .setSmallIcon(android.R.drawable.sym_def_app_icon)
                 .setCustomBigContentView(remoteViews)
                 .setCustomContentView(remoteViews);
-        drawable = new CircleProgressDrawable(context.getResources());
+        drawable = new CircleProgressDrawable(getContext().getResources());
     }
 
+    /**
+     * 设置意图
+     *
+     * @param intent
+     * @return SimplePedometerNotification
+     */
     public SimplePedometerNotification setContentIntent(PendingIntent intent) {
-        builder.setContentIntent(intent);
+        getBuilder().setContentIntent(intent);
         return this;
     }
 
@@ -75,6 +55,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置图标
      *
      * @param icon
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setIcon(@DrawableRes int icon) {
         remoteViews.setImageViewResource(R.id.iv_notification_simple_pedometer_icon, icon);
@@ -84,7 +65,8 @@ public class SimplePedometerNotification extends PedometerNotification {
     /**
      * 设置标题
      *
-     * @param title
+     * @param title SimplePedometerNotification
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setTitle(CharSequence title) {
         remoteViews.setTextViewText(R.id.tv_notification_simple_pedometer_title, title);
@@ -95,6 +77,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置标题颜色
      *
      * @param color
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setTitleColor(@ColorInt int color) {
         remoteViews.setTextColor(R.id.tv_notification_simple_pedometer_title, color);
@@ -105,6 +88,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置标题颜色
      *
      * @param size
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setTitleSize(float size) {
         remoteViews.setTextViewTextSize(R.id.tv_notification_simple_pedometer_title, TypedValue.COMPLEX_UNIT_PX, size);
@@ -115,6 +99,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置描述
      *
      * @param description
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setDescription(CharSequence description) {
         remoteViews.setTextViewText(R.id.tv_notification_simple_pedometer_description, description);
@@ -125,6 +110,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置描述颜色
      *
      * @param color
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setDescriptionColor(@ColorInt int color) {
         remoteViews.setTextColor(R.id.tv_notification_simple_pedometer_description, color);
@@ -152,6 +138,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条宽度
      *
      * @param progressWidth
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setProgressWidth(float progressWidth) {
         drawable.setProgressWidth(progressWidth);
@@ -174,6 +161,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条背景颜色
      *
      * @param progressBackgroundColor
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setProgressBackgroundColor(@ColorInt int progressBackgroundColor) {
         drawable.setProgressBackgroundColor(progressBackgroundColor);
@@ -185,6 +173,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条颜色
      *
      * @param progressColor
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setProgressColor(@ColorInt int progressColor) {
         drawable.setProgressColor(progressColor);
@@ -196,6 +185,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条数字大小
      *
      * @param progressNumberSize
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setProgressNumberSize(int progressNumberSize) {
         drawable.setProgressNumberSize(progressNumberSize);
@@ -207,6 +197,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条字体颜色
      *
      * @param progressNumberColor
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setProgressNumberColor(int progressNumberColor) {
         drawable.setProgressNumberColor(progressNumberColor);
@@ -218,6 +209,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度条最大大进度
      *
      * @param maxProgress
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setMaxProgress(int maxProgress) {
         drawable.setMaxProgress(maxProgress);
@@ -229,6 +221,7 @@ public class SimplePedometerNotification extends PedometerNotification {
      * 设置进度当前进度
      *
      * @param currentProgress
+     * @return SimplePedometerNotification
      */
     public SimplePedometerNotification setCurrentProgress(int currentProgress) {
         drawable.setCurrentProgress(currentProgress);
@@ -252,32 +245,6 @@ public class SimplePedometerNotification extends PedometerNotification {
      */
     public int getCurrentProgress() {
         return drawable.getCurrentProgress();
-    }
-
-    /**
-     * 获取通知栏构建者
-     *
-     * @return NotificationCompat.Builder
-     */
-    @Override
-    public NotificationCompat.Builder getBuilder() {
-        return builder;
-    }
-
-    /**
-     * 通知通知栏
-     */
-    @Override
-    public void notifyChanged() {
-        notifyManager.notify(id, getBuilder().build());
-    }
-
-    /**
-     * 取消通知栏
-     */
-    @Override
-    public void cancel() {
-        notifyManager.cancel(id);
     }
 
 

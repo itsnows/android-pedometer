@@ -9,9 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.pedometerlibrary.PedometerSDK;
+import com.pedometerlibrary.Pedometer;
 import com.pedometerlibrary.receive.PedometerAlarmReceiver;
 import com.pedometerlibrary.service.PedometerJobSchedulerService;
+import com.pedometerlibrary.service.PedometerService;
 import com.pedometerlibrary.util.AlarmManagerUtil;
 import com.pedometerlibrary.util.DateUtil;
 import com.pedometerlibrary.util.IntentUtil;
@@ -25,17 +26,46 @@ import com.pedometerlibrary.util.IntentUtil;
  */
 
 public class PedometerManager {
-    private static final String TAG = PedometerSDK.class.getSimpleName();
-    public Context context;
+    private static final String TAG = Pedometer.class.getSimpleName();
+    private static Context context;
+    private static PedometerManager manager;
+    private static PedometerOptions options;
+    private static boolean isInitialized;
 
-    private PedometerManager() {
+    /**
+     * 获取计步器管理实例
+     *
+     * @return PedometerManager
+     */
+    public static synchronized PedometerManager getInstance() {
+        if (manager == null) {
+            manager = new PedometerManager();
+        }
+        return manager;
     }
 
-    public static PedometerManager newInstance() {
-        return new PedometerManager();
+    /**
+     * 是否初始化计步器
+     *
+     * @return
+     */
+    public static boolean isIsInitialized() {
+        return isInitialized;
     }
 
-    public void setApplication(Context context) {
+    /**
+     * 获取计步器参数
+     *
+     * @return
+     */
+    public static PedometerOptions getOptions() {
+        return options;
+    }
+
+    public PedometerManager() {
+    }
+
+    public void initialize(Context context, PedometerOptions options) {
         if (context == null) {
             throw new IllegalArgumentException("Context can not be null");
         }
@@ -43,16 +73,47 @@ public class PedometerManager {
         if (!(context instanceof Application)) {
             throw new RuntimeException("Context must be an application context");
         }
-        this.context = context.getApplicationContext();
+
+        if (options == null) {
+            throw new RuntimeException("PedometerOptions can not be null");
+        }
+
+        if (!isInitialized) {
+            isInitialized = true;
+            PedometerManager.context = context.getApplicationContext();
+            PedometerManager.options = options;
+        }
+
+        this.initialize(context, PedometerService.ACTION);
+    }
+
+    public void initialize(Context context, String action) {
+        if (context == null) {
+            throw new IllegalArgumentException("Context can not be null");
+        }
+
+        if (!(context instanceof Application)) {
+            throw new RuntimeException("Context must be an application context");
+        }
+
+        if (action == null) {
+            throw new RuntimeException("PedometerAction can not be null");
+        }
+
+        if (!isInitialized) {
+            isInitialized = true;
+            PedometerManager.context = context.getApplicationContext();
+            setAction(action);
+        }
     }
 
     /**
      * 绑定记步服务隐式意图
      *
-     * @param pedometerAction 计步器活动隐式意图
+     * @param action 计步器活动隐式意图
      */
-    public void setPedometerAction(String pedometerAction) {
-        PedometerParam.setPedometerAction(context, pedometerAction);
+    public void setAction(String action) {
+        PedometerParam.setPedometerAction(context, action);
     }
 
     /**
@@ -98,10 +159,8 @@ public class PedometerManager {
     /**
      * 启动计步器
      */
-    public void startPedometer() {
-        String action = PedometerParam.getPedometerAction(context);
-        Intent intent = IntentUtil.createExplicitFromImplicitIntent(context, new Intent(action));
-        context.startService(intent);
+    public void start() {
+        context.startService(IntentUtil.createExplicitFromImplicitIntent(context, new Intent(PedometerParam.getPedometerAction(context))));
     }
 
 }

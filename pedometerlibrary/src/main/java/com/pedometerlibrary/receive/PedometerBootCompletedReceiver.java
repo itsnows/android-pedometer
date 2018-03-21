@@ -34,6 +34,6 @@ public class PedometerBootCompletedReceiver extends BroadcastReceiver {
         pedometerManager.setApplication(context);
         pedometerManager.setAlarmClock();
         pedometerManager.setJobScheduler();
-        pedometerManager.startPedometer();
+        pedometerManager.start();
     }
 }

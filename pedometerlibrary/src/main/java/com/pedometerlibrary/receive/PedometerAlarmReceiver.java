@@ -44,7 +44,7 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
         PedometerManager pedometerManager = PedometerManager.newInstance();
         pedometerManager.setApplication(context);
         pedometerManager.setAlarmClock();
-        pedometerManager.startPedometer();
+        pedometerManager.start();
     }
 
     /**
@@ -54,6 +54,6 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
         PedometerManager pedometerManager = PedometerManager.newInstance();
         pedometerManager.setApplication(context);
         pedometerManager.setJobScheduler();
-        pedometerManager.startPedometer();
+        pedometerManager.start();
     }
 }
