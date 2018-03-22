@@ -18,10 +18,10 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2017/9/21 9:29
  * <p>
- * PedometerContentProvider
+ * PedometerProvider
  */
 
-public class PedometerContentProvider extends ContentProvider {
+public class PedometerProvider extends ContentProvider {
     public static final String SEPARATOR = "/";
     public static final String SCHEME = "content";
     public static final String AUTHORITY = "com.pedometerlibrary.ContentProvider";
@@ -29,23 +29,23 @@ public class PedometerContentProvider extends ContentProvider {
     public static final String STEP_PART_PATH = "stepPart";
     public static final int STEP_CODE = 0;
     public static final int STEP_PART_CODE = 1;
-    private static final String TAG = PedometerContentProvider.class.getSimpleName();
+    private static final String TAG = PedometerProvider.class.getSimpleName();
     private UriMatcher uriMatcher;
-    private PedometerDatabaseHelper dbHelper;
+    private PedometerDBHelper dbHelper;
 
     @Override
     public boolean onCreate() {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         uriMatcher.addURI(AUTHORITY, STEP_PATH, STEP_CODE);
         uriMatcher.addURI(AUTHORITY, STEP_PART_PATH, STEP_PART_CODE);
-        dbHelper = new PedometerDatabaseHelper(getContext());
+        dbHelper = new PedometerDBHelper(getContext());
         return false;
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        Log.v(TAG, "PedometerContentProvider low memory");
+        Log.v(TAG, "PedometerProvider low memory");
     }
 
     @Nullable

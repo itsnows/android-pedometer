@@ -61,7 +61,7 @@
             android:exported="true"
             tools:ignore="ExportedReceiver">
             <intent-filter>
-                <action android:name="intent.action.START_UPLOAD_CRASH" />
+                <action android:name="com.pedometerlibrary.receive.PedometerStatusActionReceiver" />
                 <action android:name="com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_ZERO_ALARM_CLOCK" />
                 <action android:name="com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_ZERO_JOB_SCHEDULER" />
             </intent-filter>
@@ -98,7 +98,7 @@
 
         <!-- 计步器数据提供者 -->
         <provider
-            android:name=".data.db.PedometerContentProvider"
+            android:name=".data.db.PedometerProvider"
             android:authorities="com.pedometerlibrary.PedometerContentProvider"
             android:enabled="true"
             android:exported="false">

@@ -4,6 +4,8 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
+import java.util.List;
+
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
@@ -49,6 +51,22 @@ public class SystemUtil {
     }
 
     /**
+     * 进程是否运行
+     *
+     * @return
+     */
+    public static boolean isProessRunning(Context context, String proessName) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> processs = manager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo process : processs) {
+            if (process.processName.equals(proessName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * 获取进程名称
      *
      * @param context
@@ -64,5 +82,6 @@ public class SystemUtil {
         }
         return null;
     }
+
 
 }

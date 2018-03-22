@@ -1,10 +1,12 @@
 package com.pedometerlibrary.service;
 
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,7 +21,6 @@ import com.pedometerlibrary.R;
 import com.pedometerlibrary.common.PedometerConstants;
 import com.pedometerlibrary.common.PedometerParam;
 import com.pedometerlibrary.receive.PedometerStatusActionReceiver;
-import com.pedometerlibrary.widget.EmptyPedometerNotification;
 import com.pedometerlibrary.widget.PedometerNotification;
 import com.pedometerlibrary.widget.SimplePedometerNotification;
 
@@ -50,6 +51,10 @@ public class PedometerService extends BasePedometerService {
      */
     public static final String ACTION_TARGET = "com.pedometerlibrary.service.PedometerService.ACTION_TARGET";
     /**
+     * 记步服务主题意图
+     */
+    public static final String ACTION_THEME = "com.pedometerlibrary.service.PedometerService.ACTION_THEME";
+    /**
      * 服务端消息
      */
     public static final int MSG_SERVER = 0x1033;
@@ -76,7 +81,7 @@ public class PedometerService extends BasePedometerService {
     /**
      * 记步服务广播
      */
-    private PedometerServiceReceiver serviceReceiver;
+    private CommandReceiver serviceReceiver;
     /**
      * 记步服务端
      */
@@ -93,6 +98,10 @@ public class PedometerService extends BasePedometerService {
      * 目標
      */
     private int target;
+    /**
+     * 主题
+     */
+    private int theme;
 
     @Override
     public void onCreate() {
@@ -165,7 +174,7 @@ public class PedometerService extends BasePedometerService {
 
     private void init() {
         if (serviceReceiver == null) {
-            serviceReceiver = new PedometerServiceReceiver(this);
+            serviceReceiver = new CommandReceiver(this);
             serviceReceiver.registerReceiver(this);
         }
 
@@ -179,7 +188,8 @@ public class PedometerService extends BasePedometerService {
             statusActionReceiver.registerReceiver(this);
         }
 
-        target = PedometerParam.getPedometerTarget(this);
+        target = PedometerParam.getPedometerNotificationTarget(this);
+        theme = PedometerParam.getPedometerNotification(this);
         initNotify();
     }
 
@@ -187,9 +197,14 @@ public class PedometerService extends BasePedometerService {
      * 初始化通知栏
      */
     private void initNotify() {
-        switch (PedometerParam.getPedometerNotification(this)) {
+        clearNotify();
+        switch (theme) {
             case PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY:
-                pedometerNotification = new EmptyPedometerNotification(this, NOTIFY_ID);
+                pedometerNotification = new PedometerNotification(this, NOTIFY_ID);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                    startService(new Intent(this, AnalogServer.class));
+                }
+                startForeground(NOTIFY_ID, pedometerNotification.getNotification());
                 break;
             case PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE:
                 pedometerNotification = new SimplePedometerNotification(this, NOTIFY_ID)
@@ -210,9 +225,14 @@ public class PedometerService extends BasePedometerService {
             default:
                 break;
         }
+    }
 
+    /**
+     * 清除通知栏
+     */
+    public void clearNotify() {
         if (pedometerNotification != null) {
-            startForeground(NOTIFY_ID, pedometerNotification.getNotification());
+            pedometerNotification.cancel();
         }
     }
 
@@ -220,7 +240,7 @@ public class PedometerService extends BasePedometerService {
      * 发送消息到通知栏
      */
     private void sendMessageToNotify() {
-        switch (PedometerParam.getPedometerNotification(this)) {
+        switch (theme) {
             case PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY:
                 break;
             case PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE:
@@ -274,83 +294,18 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步器控制广播
+     * 计步服务回调接口
      */
-    private static class PedometerServiceReceiver extends BroadcastReceiver {
-        private SoftReference<PedometerService> softReference;
+    public static abstract class CallBack {
 
-        public PedometerServiceReceiver(PedometerService pedometerService) {
-            this.softReference = new SoftReference<>(pedometerService);
+        public abstract void onStep(int step);
+
+        public void onSync(int isSucceed) {
+
         }
 
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            PedometerService service = softReference.get();
-            String action = intent.getAction();
-            if (Intent.ACTION_SCREEN_ON.equals(action)) {
-                if (service != null) {
+        public void onTarget(int target) {
 
-                }
-                Log.d(TAG, "SCREEN ON");
-            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "SCREEN OFF");
-            } else if (Intent.ACTION_DATE_CHANGED.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_DATE_CHANGED");
-            } else if (Intent.ACTION_TIME_CHANGED.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_TIME_CHANGED");
-            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_TIME_TICK");
-            } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_CLOSE_SYSTEM_DIALOGS");
-            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_SHUTDOWN");
-            } else if (ACTION_SYNC.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_SYNC");
-            } else if (ACTION_TARGET.equals(action)) {
-                if (service != null) {
-
-                }
-                Log.d(TAG, "ACTION_TARGET");
-            }
-        }
-
-        public void registerReceiver(Context context) {
-            IntentFilter intentFilter = new IntentFilter();
-            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
-            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
-            intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
-            intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
-            intentFilter.addAction(Intent.ACTION_TIME_TICK);
-            intentFilter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-            intentFilter.addAction(Intent.ACTION_SHUTDOWN);
-            intentFilter.addAction(ACTION_SYNC);
-            intentFilter.addAction(ACTION_TARGET);
-            context.registerReceiver(this, intentFilter);
-        }
-
-        public void unregisterReceiver(Context context) {
-            context.unregisterReceiver(this);
         }
 
     }
@@ -418,21 +373,117 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步服务回调接口
+     * 计步器模拟服务
      */
-    public static abstract class CallBack {
+    private class AnalogServer extends Service {
 
-        // 计步探测器
-        public abstract void onStep(int step);
-
-        // 同步数据
-        public void onSync(int isSucceed) {
-
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            startForeground(NOTIFY_ID, pedometerNotification.getNotification());
+            stopSelf();
+            return super.onStartCommand(intent, flags, startId);
         }
 
-        // 同步目标
-        public void onTarget(int target) {
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
 
+        @Override
+        public void onDestroy() {
+            stopForeground(true);
+            super.onDestroy();
+        }
+    }
+
+    /**
+     * 计步器控制广播
+     */
+    private static class CommandReceiver extends BroadcastReceiver {
+        private SoftReference<PedometerService> softReference;
+
+        public CommandReceiver(PedometerService pedometerService) {
+            this.softReference = new SoftReference<>(pedometerService);
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            PedometerService service = softReference.get();
+            String action = intent.getAction();
+            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "SCREEN ON");
+            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "SCREEN OFF");
+            } else if (Intent.ACTION_DATE_CHANGED.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_DATE_CHANGED");
+            } else if (Intent.ACTION_TIME_CHANGED.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_TIME_CHANGED");
+            } else if (Intent.ACTION_TIME_TICK.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_TIME_TICK");
+            } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_CLOSE_SYSTEM_DIALOGS");
+            } else if (Intent.ACTION_SHUTDOWN.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_SHUTDOWN");
+            } else if (ACTION_SYNC.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_SYNC");
+            } else if (ACTION_TARGET.equals(action)) {
+                if (service != null) {
+
+                }
+                Log.d(TAG, "ACTION_TARGET");
+            } else if (ACTION_THEME.equals(action)) {
+                if (service != null) {
+                    service.theme = intent.getIntExtra("theme", 1);
+                    PedometerParam.setPedometerNotification(service, service.theme);
+                    service.initNotify();
+                    service.sendMessageToNotify();
+                }
+                Log.d(TAG, "ACTION_THEME");
+            }
+        }
+
+        public void registerReceiver(Context context) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Intent.ACTION_SCREEN_ON);
+            intentFilter.addAction(Intent.ACTION_SCREEN_OFF);
+            intentFilter.addAction(Intent.ACTION_DATE_CHANGED);
+            intentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+            intentFilter.addAction(Intent.ACTION_TIME_TICK);
+            intentFilter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+            intentFilter.addAction(Intent.ACTION_SHUTDOWN);
+            intentFilter.addAction(ACTION_SYNC);
+            intentFilter.addAction(ACTION_TARGET);
+            intentFilter.addAction(ACTION_THEME);
+            context.registerReceiver(this, intentFilter);
+        }
+
+        public void unregisterReceiver(Context context) {
+            context.unregisterReceiver(this);
         }
 
     }

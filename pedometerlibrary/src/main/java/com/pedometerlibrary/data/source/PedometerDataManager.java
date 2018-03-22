@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.pedometerlibrary.data.bean.PedometerStep;
 import com.pedometerlibrary.data.bean.PedometerStepPart;
-import com.pedometerlibrary.data.db.PedometerContentProvider;
+import com.pedometerlibrary.data.db.PedometerProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ public class PedometerDataManager implements PedometerDataSource {
             contentValues.put(PedometerPersistenceContract.StepEntry.COLUMN_NAME_LAST_MODIFIED_BY, pedometerStep.getLastModifiedBy());
             contentValues.put(PedometerPersistenceContract.StepEntry.COLUMN_NAME_LAST_MODIFIED_DATE, pedometerStep.getLastModifiedDate());
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepEntry.COLUMN_NAME_DATE + "=?";
             String[] selectionArgs = new String[]{date};
             cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
@@ -73,7 +73,7 @@ public class PedometerDataManager implements PedometerDataSource {
         Cursor cursor = null;
         try {
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepEntry.COLUMN_NAME_DATE + "=?";
             String[] selectionArgs = new String[]{date};
             cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
@@ -107,7 +107,7 @@ public class PedometerDataManager implements PedometerDataSource {
     public void removeStep(@NonNull String date, @NonNull GetSourceCallback<String> callback) {
         try {
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepEntry.COLUMN_NAME_DATE + "=?";
             String[] selectionArgs = new String[]{date};
             contentResolver.delete(uri, selection, selectionArgs);
@@ -136,7 +136,7 @@ public class PedometerDataManager implements PedometerDataSource {
             contentValues.put(PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_BY, pedometerStepPart.getLastModifiedBy());
             contentValues.put(PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_DATE, pedometerStepPart.getLastModifiedDate());
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_STEP_ID + "=?";
             String[] selectionArgs = new String[]{String.valueOf(stepId)};
             cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
@@ -162,7 +162,7 @@ public class PedometerDataManager implements PedometerDataSource {
         Cursor cursor = null;
         try {
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_STEP_ID + "=?";
             String[] selectionArgs = new String[]{String.valueOf(stepId)};
             cursor = contentResolver.query(uri, null, selection, selectionArgs, null);
@@ -197,7 +197,7 @@ public class PedometerDataManager implements PedometerDataSource {
     public void removeStepPart(@NonNull Long stepId, @NonNull GetSourceCallback<String> callback) {
         try {
             ContentResolver contentResolver = context.getContentResolver();
-            Uri uri = Uri.fromParts(PedometerContentProvider.SCHEME, PedometerContentProvider.AUTHORITY + PedometerContentProvider.SEPARATOR + PedometerContentProvider.STEP_PATH, null);
+            Uri uri = Uri.fromParts(PedometerProvider.SCHEME, PedometerProvider.AUTHORITY + PedometerProvider.SEPARATOR + PedometerProvider.STEP_PATH, null);
             String selection = PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_STEP_ID + "=?";
             String[] selectionArgs = new String[]{String.valueOf(stepId)};
             contentResolver.delete(uri, selection, selectionArgs);

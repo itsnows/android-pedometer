@@ -21,7 +21,7 @@ public class PedometerBootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action)) {
-            executeBootTask(context);
+            executeBootTask();
             Log.d(TAG, "PedometerBootCompletedReceiver：Intent.ACTION_BOOT_COMPLETED");
         }
     }
@@ -29,9 +29,8 @@ public class PedometerBootCompletedReceiver extends BroadcastReceiver {
     /**
      * 执行开机任务
      */
-    private void executeBootTask(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
+    private void executeBootTask() {
+        PedometerManager pedometerManager = PedometerManager.getInstance();
         pedometerManager.setAlarmClock();
         pedometerManager.setJobScheduler();
         pedometerManager.start();

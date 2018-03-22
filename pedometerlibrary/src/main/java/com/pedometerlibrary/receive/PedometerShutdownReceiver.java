@@ -21,7 +21,7 @@ public class PedometerShutdownReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (Intent.ACTION_SHUTDOWN.equals(action)) {
-            executeShutdownTask(context);
+            executeShutdownTask();
             Log.d(TAG, "PedometerShutdownReceiver：Intent.ACTION_SHUTDOWN");
         }
     }
@@ -29,9 +29,8 @@ public class PedometerShutdownReceiver extends BroadcastReceiver {
     /**
      * 执行关机任务
      */
-    private void executeShutdownTask(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
+    private void executeShutdownTask() {
+        PedometerManager pedometerManager = PedometerManager.getInstance();
         pedometerManager.setAlarmClock();
         pedometerManager.setJobScheduler();
         pedometerManager.start();

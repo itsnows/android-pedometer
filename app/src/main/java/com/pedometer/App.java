@@ -27,10 +27,12 @@ public class App extends Application {
             initDefault();
             // initCustom();
         }
+
+        initDefault();
     }
 
     /**
-     * 默认记步器
+     * 默认计步器
      */
     private void initDefault() {
         Pedometer.initialize(this,
@@ -41,7 +43,7 @@ public class App extends Application {
                         .setNotificationAction(new PedometerOptions.NotificationAction() {
                             @Override
                             public void onAction(Context context, Bundle data) {
-                                Intent intent = new Intent(context, MainActivity.class);
+                                Intent intent = new Intent(context, StartActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 intent.putExtras(data);
                                 context.startActivity(intent);

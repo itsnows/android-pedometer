@@ -29,10 +29,10 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (ACTION_ZERO_ALARM_CLOCK.equals(action)) {
-            executeZeroClockTask(context);
+            executeZeroClockTask();
             Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_ALARM_CLOCK");
         } else if (ACTION_ZERO_JOB_SCHEDULER.equals(action)) {
-            executeRebootPedometer(context);
+            executeRebootPedometerTask();
             Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_JOB_SCHEDULER");
         }
     }
@@ -40,9 +40,8 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
     /**
      * 执行零点钟闹钟任务
      */
-    private void executeZeroClockTask(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
+    private void executeZeroClockTask() {
+        PedometerManager pedometerManager = PedometerManager.getInstance();
         pedometerManager.setAlarmClock();
         pedometerManager.start();
     }
@@ -50,9 +49,8 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
     /**
      * 执行零点工作任务
      */
-    private void executeRebootPedometer(Context context) {
-        PedometerManager pedometerManager = PedometerManager.newInstance();
-        pedometerManager.setApplication(context);
+    private void executeRebootPedometerTask() {
+        PedometerManager pedometerManager = PedometerManager.getInstance();
         pedometerManager.setJobScheduler();
         pedometerManager.start();
     }

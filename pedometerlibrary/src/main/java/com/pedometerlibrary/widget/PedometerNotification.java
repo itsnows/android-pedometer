@@ -16,13 +16,13 @@ import com.pedometerlibrary.util.PackageManagerUtil;
  * <p>
  * PedometerNotification
  */
-public abstract class PedometerNotification {
+public class PedometerNotification {
     private Context context;
     private int id;
     private NotificationCompat.Builder builder;
     private NotificationManager notificationManager;
 
-    protected PedometerNotification(Context context, int id) {
+    public PedometerNotification(Context context, int id) {
         this.context = context;
         this.id = id;
         init();
@@ -82,7 +82,7 @@ public abstract class PedometerNotification {
      * 通知通知栏
      */
     public void notifyChanged() {
-        notificationManager.notify(id,  getNotification());
+        notificationManager.notify(id, getNotification());
     }
 
     /**

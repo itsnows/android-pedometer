@@ -16,6 +16,7 @@ import com.pedometerlibrary.service.PedometerService;
 import com.pedometerlibrary.util.AlarmManagerUtil;
 import com.pedometerlibrary.util.DateUtil;
 import com.pedometerlibrary.util.IntentUtil;
+import com.pedometerlibrary.util.SystemUtil;
 
 /**
  * Author: SXF
@@ -30,6 +31,7 @@ public class PedometerManager {
     private static Context context;
     private static PedometerManager manager;
     private static PedometerOptions options;
+    private static String action;
     private static boolean isInitialized;
 
     /**
@@ -84,7 +86,12 @@ public class PedometerManager {
             PedometerManager.options = options;
         }
 
-        this.initialize(context, PedometerService.ACTION);
+        if (!SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice")) {
+            setAction(PedometerService.ACTION);
+            setAlarmClock();
+            setJobScheduler();
+            start();
+        }
     }
 
     public void initialize(Context context, String action) {
@@ -103,17 +110,44 @@ public class PedometerManager {
         if (!isInitialized) {
             isInitialized = true;
             PedometerManager.context = context.getApplicationContext();
-            setAction(action);
+            PedometerManager.action = action;
+        }
+
+        if (!SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice")) {
+            setAction(PedometerService.ACTION);
+            setAlarmClock();
+            setJobScheduler();
+            start();
         }
     }
 
     /**
-     * 绑定记步服务隐式意图
+     * 绑定计步器务隐式意图
      *
      * @param action 计步器活动隐式意图
      */
     public void setAction(String action) {
         PedometerParam.setPedometerAction(context, action);
+    }
+
+    /**
+     * 设置计步器主题
+     *
+     * @param theme 计步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
+     */
+    public void setTheme(PedometerOptions.NotificationTheme theme) {
+        if (!isIsInitialized()) {
+            throw new RuntimeException("Pedometer is uninitialized");
+        }
+        Intent intent = new Intent(PedometerService.ACTION_THEME);
+        if (theme == PedometerOptions.NotificationTheme.EMPTY) {
+            intent.putExtra("theme", 0);
+        } else if (theme == PedometerOptions.NotificationTheme.SIMPLE) {
+            intent.putExtra("theme", 1);
+        } else {
+            intent.putExtra("theme", 2);
+        }
+        context.sendBroadcast(intent);
     }
 
     /**
@@ -160,7 +194,8 @@ public class PedometerManager {
      * 启动计步器
      */
     public void start() {
-        context.startService(IntentUtil.createExplicitFromImplicitIntent(context, new Intent(PedometerParam.getPedometerAction(context))));
+        Intent intent = new Intent(PedometerParam.getPedometerAction(context));
+        context.startService(IntentUtil.createExplicitFromImplicitIntent(context, intent));
     }
 
 }

@@ -26,29 +26,29 @@ public class Pedometer {
      * 初始化计步器
      *
      * @param application      Application
-     * @param pedometerOptions 记步器参数
+     * @param pedometerOptions 计步器选项
      */
     public static void initialize(Application application, PedometerOptions pedometerOptions) {
-        if (PedometerManager.isIsInitialized()) {
-            throw new RuntimeException("Pedometer cannot repeated initialization");
+        if (!PedometerManager.isIsInitialized()) {
+            PedometerManager manager = PedometerManager.getInstance();
+            manager.initialize(application, pedometerOptions);
+            Log.v(TAG, "Pedometer initialized");
         }
-        initialize(application, pedometerOptions);
     }
 
     /**
      * 初始化自定义计步器
      *
      * @param application     Application
-     * @param pedometerAction 记步器服务隐式意图
-     *                        记步器服务必须继承com.pedometerlibrary.service.BasePedometerService
+     * @param pedometerAction 计步器服务隐式意图
+     *                        计步器服务必须继承com.pedometerlibrary.service.BasePedometerService
      */
     public static void initialize(Application application, String pedometerAction) {
-        if (PedometerManager.isIsInitialized()) {
-            throw new RuntimeException("Pedometer cannot repeated initialization");
+        if (!PedometerManager.isIsInitialized()) {
+            PedometerManager manager = PedometerManager.getInstance();
+            manager.initialize(application, pedometerAction);
+            Log.v(TAG, "Pedometer initialized");
         }
-        PedometerManager manager = PedometerManager.getInstance();
-        manager.initialize(application, pedometerAction);
-        Log.v(TAG, "Pedometer initialized");
     }
 
 }

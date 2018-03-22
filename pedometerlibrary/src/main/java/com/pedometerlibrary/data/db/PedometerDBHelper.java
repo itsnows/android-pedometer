@@ -14,7 +14,7 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
  * <p>
  * 计步器数据库助手
  */
-public class PedometerDatabaseHelper extends SQLiteOpenHelper {
+public class PedometerDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pedometer.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -53,15 +53,15 @@ public class PedometerDatabaseHelper extends SQLiteOpenHelper {
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_BY + " VARCHER(50)," +
             PedometerPersistenceContract.StepPartEntry.COLUMN_NAME_LAST_MODIFIED_DATE + " TEXT)";
 
-    public PedometerDatabaseHelper(Context context) {
+    public PedometerDBHelper(Context context) {
         this(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public PedometerDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public PedometerDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         this(context, name, factory, version, null);
     }
 
-    public PedometerDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
+    public PedometerDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
         super(context, name, factory, version, errorHandler);
     }
 

@@ -11,7 +11,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.pedometer.MainActivity">
+        <activity
+            android:name=".StartActivity"
+            android:theme="@style/AppTheme.Translucent">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -19,9 +21,20 @@
             </intent-filter>
         </activity>
 
-        <!--自定义计步器服务-->
+        <!--计步器首页界面-->
+        <activity
+            android:name=".HomePagerActivity"
+            android:label="@string/title_activity_home_pager"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity
+            android:name=".ScrollingActivity"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- 自定义计步器服务 -->
         <service
-            android:name="com.pedometer.CustomPedometerService"
+            android:name=".CustomPedometerService"
             android:enabled="true"
             android:exported="true"
             android:priority="1000"
@@ -39,6 +52,17 @@
                 <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </service>
+
+        <!-- 计步器警报广播 -->
+        <receiver
+            android:name="com.pedometerlibrary.receive.PedometerStatusActionReceiver"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="intent.action.START_UPLOAD_CRASH" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

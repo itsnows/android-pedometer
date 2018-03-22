@@ -23,7 +23,6 @@ public class PedometerStatusActionReceiver extends BroadcastReceiver {
         if (ACTION.equals(action)) {
 
 
-
         }
         Log.d(TAG, action);
     }
