@@ -10,6 +10,7 @@ import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerParam;
 import com.pedometerlibrary.util.DateUtil;
+import com.pedometerlibrary.util.LogUtil;
 
 import java.util.Date;
 
@@ -92,42 +93,14 @@ public class StepDetector implements SensorEventListener {
         systemBootTime = PedometerParam.getSystemBootTime(context);
         systemRebootStatus = PedometerParam.getSystemRebootStatus(context);
 
-        // 系统是否重新启动
-        // 1.开机或关机广播成立，则当前是否重启过，默认第一次启动为重启过
-        // 2.开机或关机广播不成立，则当前系统运行时间小于最后一次记录的系统运行时间
-        // 并且当前系统开机的时间是否等于最后一次记录的开机时间成立,则为重新启动过系统
-        if (systemRebootStatus) {
-            systemRebootStatus = true;
-            Log.e(TAG, "初始化重启操作");
-        }
-
-        // 上一次传感器日期是否跨天
-        Date lastDate = new Date(lastSensorTime);
-        Date currentDate = new Date();
-        if (!TextUtils.equals(DateUtil.parseDate(lastDate, "yyyy-MM-dd"), DateUtil.parseDate(currentDate, "yyyy-MM-dd"))) {
-            isReset = true;
-
+        if (isResetStep()) {
+            currentAppStep = 0;
             lastSensorTime = DateUtil.getSystemTime();
+            systemRebootStatus = false;
+            PedometerParam.setCurrentAppStep(context, currentAppStep);
             PedometerParam.setLastSensorTime(context, lastSensorTime);
-
-            systemRebootStatus = false;
             PedometerParam.setSystemRebootStatus(context, systemRebootStatus);
-
-            currentAppStep = 0;
-            PedometerParam.setCurrentAppStep(context, currentAppStep);
-            Log.e(TAG, "初始化跨天操作");
-        }
-
-        // 当前时间是否是零点
-        if (DateUtil.isMidnightTime(currentDate)) {
-            isReset = true;
-
-            systemRebootStatus = false;
-            PedometerParam.setSystemRebootStatus(context, systemRebootStatus);
-
-            currentAppStep = 0;
-            PedometerParam.setCurrentAppStep(context, currentAppStep);
-            Log.e(TAG, "初始化零点操作");
+            LogUtil.e(TAG, "执行重置步数");
         }
     }
 
@@ -137,29 +110,27 @@ public class StepDetector implements SensorEventListener {
     public void start() {
         // Sensor.TYPE_STEP_COUNTER 开机被激活后统计步数，重启手机后该数据清空 每次返回统计步数
         Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-
         // Sensor.TYPE_STEP_DETECTOR 临时步数，每次返回1.0
         Sensor detectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-
         if (countSensor != null) {
-            Log.v(TAG, "Sensor.TYPE_STEP_COUNTER");
+            LogUtil.v(TAG, "Sensor.TYPE_STEP_COUNTER");
             sensor = countSensor;
             boolean isAvailable = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!isAvailable) {
-                Log.v(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
+                LogUtil.v(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
             }
         } else if (detectorSensor != null) {
-            Log.v(TAG, "Sensor.TYPE_STEP_DETECTOR");
+            LogUtil.v(TAG, "Sensor.TYPE_STEP_DETECTOR");
             sensor = detectorSensor;
             boolean isAvailable = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             if (!isAvailable) {
-                Log.v(TAG, "Sensor.TYPE_STEP_DETECTOR unavailable");
+                LogUtil.v(TAG, "Sensor.TYPE_STEP_DETECTOR unavailable");
             }
             if (stepListener != null) {
                 stepListener.onStep(currentAppStep);
             }
         } else {
-            Log.v(TAG, "The device does not support PedometerStep sensors");
+            LogUtil.v(TAG, "The device does not support pedometer sensors");
             if (stepListener != null) {
                 stepListener.onNotSupported();
             }
@@ -185,14 +156,12 @@ public class StepDetector implements SensorEventListener {
     /**
      * 是否重置步数
      *
-     * @return true：重置步数、false：不做处理
+     * @return
      */
     private boolean isResetStep() {
-        // 记录时间是否跨天
         if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
             return true;
         }
-        // 当前时间是否是午夜12点
         if (DateUtil.isMidnightTime(new Date())) {
             return true;
         }
@@ -200,71 +169,49 @@ public class StepDetector implements SensorEventListener {
     }
 
     /**
-     * 重置任务
+     * 是否重启系统
+     *
+     * @return
      */
-    public void reset(int tempStep) {
-        currentAppStep = 0;
-        PedometerParam.setCurrentAppStep(context, currentAppStep);
-
-        lastOffsetStep = tempStep;
-        PedometerParam.setLastOffsetStep(context, lastOffsetStep);
-
-        systemBootTime = DateUtil.getSystemBootTime();
-        PedometerParam.setSystemBootTime(context, systemBootTime);
-        Log.e(TAG, "重置数据操作");
-    }
-
-    /**
-     * 重启任务
-     */
-    public void reboot(int tempStep) {
-        lastOffsetStep = tempStep - currentAppStep;
-        PedometerParam.setLastOffsetStep(context, lastOffsetStep);
-
-        systemRebootStatus = false;
-        PedometerParam.setSystemRebootStatus(context, systemRebootStatus);
-
-        systemBootTime = DateUtil.getSystemBootTime();
-        PedometerParam.setSystemBootTime(context, systemBootTime);
-        Log.e(TAG, "重启任务操作");
+    private boolean isSystemReboot() {
+        return systemRebootStatus;
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // 当前传感器类型
         int sensorType = sensor.getType();
         if (sensorType == Sensor.TYPE_STEP_COUNTER) {
             int tempStep = (int) event.values[0];
-            Log.d(TAG, "当前系统步数（TYPE_STEP_COUNTER）" + tempStep);
-            if (isReset) {
-                isReset = false;
-                reset(tempStep);
-            } else {
-                if (systemRebootStatus) {
-                    reboot(tempStep);
-                }
+            LogUtil.e(TAG, "System Step：" + tempStep);
+            if (isResetStep()) {
+                currentAppStep = 0;
+                lastOffsetStep = tempStep;
+                systemBootTime = DateUtil.getSystemBootTime();
+                PedometerParam.setLastOffsetStep(context, lastOffsetStep);
+                PedometerParam.setCurrentAppStep(context, currentAppStep);
+                PedometerParam.setSystemBootTime(context, systemBootTime);
+                LogUtil.e(TAG, "执行重置操作");
             }
 
-            if (!TextUtils.equals(DateUtil.parseDate(new Date(lastSensorTime), "yyyy-MM-dd"), DateUtil.parseDate(new Date(), "yyyy-MM-dd"))) {
-                reset(tempStep);
-            }
-
-            if (DateUtil.isMidnightTime(new Date())) {
-                reset(tempStep);
+            if (isSystemReboot()) {
+                lastOffsetStep = tempStep - currentAppStep;
+                systemRebootStatus = false;
+                systemBootTime = DateUtil.getSystemBootTime();
+                PedometerParam.setLastOffsetStep(context, lastOffsetStep);
+                PedometerParam.setSystemBootTime(context, systemBootTime);
+                PedometerParam.setSystemRebootStatus(context, systemRebootStatus);
+                LogUtil.e(TAG, "执行重启操作");
             }
 
             int currentStep = tempStep - lastOffsetStep;
-
             if (currentStep < currentAppStep) {
                 lastOffsetStep = tempStep - currentAppStep;
                 PedometerParam.setLastOffsetStep(context, lastOffsetStep);
             } else {
                 currentAppStep = currentStep;
             }
-
             lastSensorStep = tempStep;
             lastSensorTime = DateUtil.getSystemTime();
-
             if (currentAppStep < 0) {
                 currentAppStep = 0;
                 lastOffsetStep = currentAppStep;

@@ -5,10 +5,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerParam;
 import com.pedometerlibrary.util.DateUtil;
+import com.pedometerlibrary.util.LogUtil;
 
 import java.util.Date;
 
@@ -31,14 +31,17 @@ public class AccelerometerStepDetector implements SensorEventListener {
      */
     private static final float INITIAL_VALUE = 1.3f;
     /**
+     * 存放计算阈值的波峰波谷差值
+     */
+    private static final float[] TEMP_VALUE = new float[VALUE_NUM];
+    /**
      * 存放三轴数据
      */
-    private float[] oriValues = new float[3];
+    private static final float[] ORI_VALUES = new float[3];
     /**
-     * 用于存放计算阈值的波峰波谷差值
+     * 临时阀值索引
      */
-    private float[] tempValue = new float[VALUE_NUM];
-    private int tempCount = 0;
+    private int tempIndex = 0;
     /**
      * 是否上升的标志位
      */
@@ -153,10 +156,10 @@ public class AccelerometerStepDetector implements SensorEventListener {
 
         if (isResetStep()) {
             currentAppStep = 0;
-            PedometerParam.setCurrentAppStep(context, currentAppStep);
-
             lastSensorTime = DateUtil.getSystemTime();
+            PedometerParam.setCurrentAppStep(context, currentAppStep);
             PedometerParam.setLastSensorTime(context, lastSensorTime);
+            LogUtil.e(TAG, "执行重置步数");
         }
     }
 
@@ -166,17 +169,17 @@ public class AccelerometerStepDetector implements SensorEventListener {
     public void start() {
         Sensor accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (accelerationSensor != null) {
-            Log.v(TAG, "Sensor.TYPE_ACCELEROMETER");
+            LogUtil.d(TAG, "Sensor.TYPE_ACCELEROMETER");
             sensor = accelerationSensor;
             boolean isAvailable = sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_FASTEST);
             if (!isAvailable) {
-                Log.v(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
+                LogUtil.d(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
             }
             if (stepListener != null) {
                 stepListener.onStep(currentAppStep);
             }
         } else {
-            Log.v(TAG, "The device does not support PedometerStep sensors");
+            LogUtil.d(TAG, "The device does not support pedometer sensors");
             if (stepListener != null) {
                 stepListener.onNotSupported();
             }
@@ -202,14 +205,12 @@ public class AccelerometerStepDetector implements SensorEventListener {
     /**
      * 是否重置步数
      *
-     * @return true：重置步数、false：不做处理
+     * @return
      */
     private boolean isResetStep() {
-        // 记录时间是否跨天
         if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
             return true;
         }
-        // 当前时间是否是午夜12点
         if (DateUtil.isMidnightTime(new Date())) {
             return true;
         }
@@ -220,17 +221,17 @@ public class AccelerometerStepDetector implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             for (int i = 0; i < 3; i++) {
-                oriValues[i] = event.values[i];
+                ORI_VALUES[i] = event.values[i];
             }
-            gravityNew = (float) Math.sqrt(oriValues[0] * oriValues[0]
-                    + oriValues[1] * oriValues[1] + oriValues[2] * oriValues[2]);
+            gravityNew = (float) Math.sqrt(ORI_VALUES[0] * ORI_VALUES[0]
+                    + ORI_VALUES[1] * ORI_VALUES[1] + ORI_VALUES[2] * ORI_VALUES[2]);
             detectorNewStep(gravityNew);
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        Log.v(TAG, "Sensor accuracy:" + accuracy);
+        LogUtil.v(TAG, "Sensor accuracy:" + accuracy);
     }
 
     /**
@@ -351,15 +352,15 @@ public class AccelerometerStepDetector implements SensorEventListener {
      */
     private float peakValleyThread(float value) {
         float tempThread = ThreadValue;
-        if (tempCount < VALUE_NUM) {
-            tempValue[tempCount] = value;
-            tempCount++;
+        if (tempIndex < VALUE_NUM) {
+            TEMP_VALUE[tempIndex] = value;
+            tempIndex++;
         } else {
-            tempThread = averageValue(tempValue, VALUE_NUM);
+            tempThread = averageValue(TEMP_VALUE, VALUE_NUM);
             for (int i = 1; i < VALUE_NUM; i++) {
-                tempValue[i - 1] = tempValue[i];
+                TEMP_VALUE[i - 1] = TEMP_VALUE[i];
             }
-            tempValue[VALUE_NUM - 1] = value;
+            TEMP_VALUE[VALUE_NUM - 1] = value;
         }
         return tempThread;
 
