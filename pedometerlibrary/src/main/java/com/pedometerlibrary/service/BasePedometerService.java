@@ -107,9 +107,14 @@ public abstract class BasePedometerService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        stepDetectorManager = new StepDetectorManager(this);
-        stepDetectorManager.setCallBack(callBack);
-        taskHandler = new TaskHandler(this);
+        if (stepDetectorManager == null) {
+            stepDetectorManager = new StepDetectorManager(this);
+            stepDetectorManager.setCallBack(callBack);
+        }
+
+        if (taskHandler == null) {
+            taskHandler = new TaskHandler(this);
+        }
     }
 
     @SuppressWarnings("WrongConstant")

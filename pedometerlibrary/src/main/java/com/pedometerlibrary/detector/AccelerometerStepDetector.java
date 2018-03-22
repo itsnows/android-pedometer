@@ -25,12 +25,11 @@ public class AccelerometerStepDetector implements SensorEventListener {
     /**
      * 波峰波谷差值
      */
-    private final int VALUE_NUM = 4;
+    private static final int VALUE_NUM = 4;
     /**
      * 动态阈值需要动态的数据，这个值用于这些动态数据的阈值
      */
-    private final float InitialValue = (float) 1.3;
-    private Context context;
+    private static final float INITIAL_VALUE = 1.3f;
     /**
      * 存放三轴数据
      */
@@ -87,12 +86,12 @@ public class AccelerometerStepDetector implements SensorEventListener {
     /**
      * 初始阈值
      */
-    private float ThreadValue = (float) 2.0;
+    private float ThreadValue = 2.0f;
 
     /**
      * 波峰波谷时间差
      */
-    private int TimeInterval = 250;
+    private int timeInterval = 250;
 
     /**
      * 当前App步数
@@ -118,6 +117,11 @@ public class AccelerometerStepDetector implements SensorEventListener {
      * 当前峰值时间
      */
     private long currentPeakTime;
+
+    /**
+     * Context
+     */
+    private Context context;
 
     /**
      * 传感器管理
@@ -147,9 +151,12 @@ public class AccelerometerStepDetector implements SensorEventListener {
         currentAppStep = PedometerParam.getCurrentAppStep(context);
         lastSensorTime = PedometerParam.getLastSensorTime(context);
 
-        // 上一次传感器日期是否跨天
-        if (DateUtil.differentDays(new Date(lastSensorTime), new Date()) > 0 || DateUtil.isZeroTime(new Date())) {
-            reset();
+        if (isResetStep()) {
+            currentAppStep = 0;
+            PedometerParam.setCurrentAppStep(context, currentAppStep);
+
+            lastSensorTime = DateUtil.getSystemTime();
+            PedometerParam.setLastSensorTime(context, lastSensorTime);
         }
     }
 
@@ -193,14 +200,20 @@ public class AccelerometerStepDetector implements SensorEventListener {
     }
 
     /**
-     * 重置任务
+     * 是否重置步数
+     *
+     * @return true：重置步数、false：不做处理
      */
-    public void reset() {
-        currentAppStep = 0;
-        PedometerParam.setCurrentAppStep(context, currentAppStep);
-
-        lastSensorTime = DateUtil.getSystemTime();
-        PedometerParam.setLastSensorTime(context, lastSensorTime);
+    private boolean isResetStep() {
+        // 记录时间是否跨天
+        if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
+            return true;
+        }
+        // 当前时间是否是午夜12点
+        if (DateUtil.isMidnightTime(new Date())) {
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -233,13 +246,13 @@ public class AccelerometerStepDetector implements SensorEventListener {
             if (detectorPeak(values, gravityOld)) {
                 timeOfLastPeak = timeOfThisPeak;
                 timeOfNow = System.currentTimeMillis();
-                if (timeOfNow - timeOfLastPeak >= TimeInterval
+                if (timeOfNow - timeOfLastPeak >= timeInterval
                         && (peakOfWave - valleyOfWave >= ThreadValue)) {
                     timeOfThisPeak = timeOfNow;
                     detectorValidStep();
                 }
-                if (timeOfNow - timeOfLastPeak >= TimeInterval
-                        && (peakOfWave - valleyOfWave >= InitialValue)) {
+                if (timeOfNow - timeOfLastPeak >= timeInterval
+                        && (peakOfWave - valleyOfWave >= INITIAL_VALUE)) {
                     timeOfThisPeak = timeOfNow;
                     ThreadValue = peakValleyThread(peakOfWave - valleyOfWave);
                 }
@@ -250,31 +263,39 @@ public class AccelerometerStepDetector implements SensorEventListener {
 
     /**
      * 有效运动处理
-     * 1.连续记录7才开始计步
-     * 2.例如记录的6步用户停住超过3秒，则前面的记录失效，下次从头开始
-     * 3.连续记录了6步用户还在运动，之前的数据才有效
+     * 1.连续记录9才开始计步
+     * 2.连续记录9步用户停住超过3秒，则前面的记录失效，下次从头开始
+     * 3.连续记录了9步用户还在运动，之前的数据才有效
      */
     private void detectorValidStep() {
         lastPeakTime = currentPeakTime;
         currentPeakTime = System.currentTimeMillis();
         if (currentPeakTime - lastPeakTime < 3000L) {
-            if (tempStep < 6) {
+            if (tempStep < 9) {
                 tempStep++;
-            } else if (tempStep == 6) {
-                tempStep++;
-                currentAppStep += tempStep;
-                if (DateUtil.differentDays(new Date(lastSensorTime), new Date()) > 0 || DateUtil.isZeroTime(new Date())) {
-                    reset();
+                if (isResetStep()) {
+                    currentAppStep = tempStep;
+                    lastSensorTime = DateUtil.getSystemTime();
                 }
                 PedometerParam.setCurrentAppStep(context, currentAppStep);
-                PedometerParam.setLastSensorTime(context, DateUtil.getSystemTime());
+                PedometerParam.setLastSensorTime(context, lastSensorTime);
+            } else if (tempStep == 9) {
+                tempStep++;
+                currentAppStep += tempStep;
+                if (isResetStep()) {
+                    currentAppStep = tempStep;
+                    lastSensorTime = DateUtil.getSystemTime();
+                }
+                PedometerParam.setCurrentAppStep(context, currentAppStep);
+                PedometerParam.setLastSensorTime(context, lastSensorTime);
                 if (stepListener != null) {
                     stepListener.onStep(currentAppStep);
                 }
             } else {
                 currentAppStep++;
-                if (DateUtil.differentDays(new Date(lastSensorTime), new Date()) > 0 || DateUtil.isZeroTime(new Date())) {
-                    reset();
+                if (isResetStep()) {
+                    currentAppStep = 0;
+                    lastSensorTime = DateUtil.getSystemTime();
                 }
                 PedometerParam.setCurrentAppStep(context, currentAppStep);
                 PedometerParam.setLastSensorTime(context, DateUtil.getSystemTime());

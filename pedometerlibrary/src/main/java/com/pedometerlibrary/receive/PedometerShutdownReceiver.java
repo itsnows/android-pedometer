@@ -30,10 +30,8 @@ public class PedometerShutdownReceiver extends BroadcastReceiver {
      * 执行关机任务
      */
     private void executeShutdownTask() {
-        PedometerManager pedometerManager = PedometerManager.getInstance();
-        pedometerManager.setAlarmClock();
-        pedometerManager.setJobScheduler();
-        pedometerManager.start();
+        PedometerManager.getInstance().setAlarmClock();
+        PedometerManager.getInstance().start();
     }
 
 }

@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerManager;
+import com.pedometerlibrary.util.DateUtil;
+
+import java.util.Date;
 
 /**
  * Author: SXF
@@ -18,22 +21,25 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
     /**
      * 零点闹钟
      */
-    public static final String ACTION_ZERO_ALARM_CLOCK = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_ALARM_CLOCK";
+    public static final String ACTION_MIDNIGHT_ALARM_CLOCK = "com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_MIDNIGHT_ALARM_CLOCK";
     /**
      * 零点工作
      */
-    public static final String ACTION_ZERO_JOB_SCHEDULER = "com.pedometerlibrary.receive.PedometerActionReceiver.ACTION_ZERO_JOB_SCHEDULER";
+    public static final String ACTION_MIDNIGHT_JOB_SCHEDULER = "com.pedometerlibrary.receive.PedometerAlarmReceiver.ACTION_MIDNIGHT_JOB_SCHEDULER";
     private static final String TAG = PedometerAlarmReceiver.class.getSimpleName();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        if (ACTION_ZERO_ALARM_CLOCK.equals(action)) {
+        if (ACTION_MIDNIGHT_ALARM_CLOCK.equals(action)) {
+            if (DateUtil.isMidnightTime(new Date())) {
+
+            }
             executeZeroClockTask();
-            Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_ALARM_CLOCK");
-        } else if (ACTION_ZERO_JOB_SCHEDULER.equals(action)) {
+            Log.d(TAG, "PedometerAlarmReceiver：ACTION_MIDNIGHT_ALARM_CLOCK");
+        } else if (ACTION_MIDNIGHT_JOB_SCHEDULER.equals(action)) {
             executeRebootPedometerTask();
-            Log.d(TAG, "PedometerAlarmReceiver：ACTION_ZERO_JOB_SCHEDULER");
+            Log.d(TAG, "PedometerAlarmReceiver：ACTION_MIDNIGHT_JOB_SCHEDULER");
         }
     }
 
@@ -41,17 +47,14 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
      * 执行零点钟闹钟任务
      */
     private void executeZeroClockTask() {
-        PedometerManager pedometerManager = PedometerManager.getInstance();
-        pedometerManager.setAlarmClock();
-        pedometerManager.start();
+        PedometerManager.getInstance().setAlarmClock();
+        PedometerManager.getInstance().start();
     }
 
     /**
      * 执行零点工作任务
      */
     private void executeRebootPedometerTask() {
-        PedometerManager pedometerManager = PedometerManager.getInstance();
-        pedometerManager.setJobScheduler();
-        pedometerManager.start();
+        PedometerManager.getInstance().start();
     }
 }

@@ -9,9 +9,10 @@ import android.os.Message;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
+import com.pedometerlibrary.common.PedometerManager;
 import com.pedometerlibrary.receive.PedometerAlarmReceiver;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 
 /**
  * Author: SXF
@@ -22,9 +23,10 @@ import java.lang.ref.WeakReference;
  */
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-public class PedometerJobSchedulerService extends JobService {
-    public static final int JOB_REBOOT_PEDOMETER_ID = 0x1201;
-    private static final String TAG = PedometerJobSchedulerService.class.getSimpleName();
+public class PedometerJobService extends JobService {
+    private static final String TAG = PedometerJobService.class.getSimpleName();
+    public static final int JOB_REBOOT_ID = 0x1201;
+    public static final int JOB_MIDNIGHT_ID = 0x1520;
     /**
      * 任务处理
      */
@@ -45,16 +47,19 @@ public class PedometerJobSchedulerService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Message message = Message.obtain(jobHandler, params.getJobId());
+        Message message = Message.obtain();
+        message.what = params.getJobId();
         message.obj = params;
         jobHandler.sendMessage(message);
         Log.d(TAG, "onStartJob");
+        if (!PedometerManager.getInstance().isRunning()) {
+            PedometerManager.getInstance().start();
+        }
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        jobHandler.removeMessages(params.getJobId());
         Log.d(TAG, "onStopJob");
         return false;
     }
@@ -63,23 +68,29 @@ public class PedometerJobSchedulerService extends JobService {
      * 任务处理
      */
     private static class JobHandler extends Handler {
-        private WeakReference<PedometerJobSchedulerService> weakReference;
+        private SoftReference<PedometerJobService> weakReference;
 
-        private JobHandler(PedometerJobSchedulerService pedometerJobSchedulerService) {
-            this.weakReference = new WeakReference<>(pedometerJobSchedulerService);
+        private JobHandler(PedometerJobService service) {
+            this.weakReference = new SoftReference<>(service);
         }
 
         @Override
         public void handleMessage(Message msg) {
-            PedometerJobSchedulerService service = weakReference.get();
+            PedometerJobService service = weakReference.get();
             if (service == null) {
                 return;
             }
             JobParameters jobParameters = (JobParameters) msg.obj;
+            service.jobFinished(jobParameters, false);
             switch (msg.what) {
-                case JOB_REBOOT_PEDOMETER_ID:
-                    service.sendBroadcast(new Intent(PedometerAlarmReceiver.ACTION_ZERO_JOB_SCHEDULER));
-                    service.jobFinished(jobParameters, false);
+                case JOB_REBOOT_ID:
+                    PedometerManager.getInstance().setRebootJobScheduler();
+                    if (!PedometerManager.getInstance().isRunning()) {
+                        PedometerManager.getInstance().start();
+                    }
+                    break;
+                case JOB_MIDNIGHT_ID:
+                    service.sendBroadcast(new Intent(PedometerAlarmReceiver.ACTION_MIDNIGHT_JOB_SCHEDULER));
                     break;
                 default:
                     break;

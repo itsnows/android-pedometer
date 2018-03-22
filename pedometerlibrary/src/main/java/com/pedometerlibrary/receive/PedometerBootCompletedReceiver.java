@@ -30,9 +30,7 @@ public class PedometerBootCompletedReceiver extends BroadcastReceiver {
      * 执行开机任务
      */
     private void executeBootTask() {
-        PedometerManager pedometerManager = PedometerManager.getInstance();
-        pedometerManager.setAlarmClock();
-        pedometerManager.setJobScheduler();
-        pedometerManager.start();
+        PedometerManager.getInstance().setAlarmClock();
+        PedometerManager.getInstance().start();
     }
 }

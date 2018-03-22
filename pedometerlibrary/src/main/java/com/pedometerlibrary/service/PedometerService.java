@@ -1,5 +1,6 @@
 package com.pedometerlibrary.service;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -197,14 +198,13 @@ public class PedometerService extends BasePedometerService {
      * 初始化通知栏
      */
     private void initNotify() {
-        clearNotify();
         switch (theme) {
             case PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY:
                 pedometerNotification = new PedometerNotification(this, NOTIFY_ID);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                     startService(new Intent(this, AnalogServer.class));
                 }
-                startForeground(NOTIFY_ID, pedometerNotification.getNotification());
+                startForeground(NOTIFY_ID, new Notification());
                 break;
             case PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE:
                 pedometerNotification = new SimplePedometerNotification(this, NOTIFY_ID)
@@ -228,20 +228,14 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 清除通知栏
-     */
-    public void clearNotify() {
-        if (pedometerNotification != null) {
-            pedometerNotification.cancel();
-        }
-    }
-
-    /**
      * 发送消息到通知栏
      */
     private void sendMessageToNotify() {
         switch (theme) {
             case PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY:
+                if (pedometerNotification != null) {
+                    pedometerNotification.cancel();
+                }
                 break;
             case PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE:
                 SimplePedometerNotification notification = (SimplePedometerNotification) this.pedometerNotification;
@@ -264,22 +258,22 @@ public class PedometerService extends BasePedometerService {
      * 发送消息到客户端
      */
     private void sendMessageToClient() {
-        if (clentMessengers == null) {
+        List<Messenger> messengers = clentMessengers;
+        if (messengers == null) {
             return;
         }
-        Message message = Message.obtain();
-        message.what = MSG_SERVER;
-        message.setData(new Bundle());
         try {
-            Iterator<Messenger> iterator = clentMessengers.iterator();
+            Iterator<Messenger> iterator = messengers.iterator();
             while (iterator.hasNext()) {
                 Messenger messenger = iterator.next();
-                if (messenger == null) {
-                    iterator.remove();
-                    break;
+                if (messenger != null) {
+                    Message message = Message.obtain();
+                    message.what = MSG_SERVER;
+                    message.setData(new Bundle());
+                    message.getData().putInt("step", getStep());
+                    messenger.send(message);
                 }
-                message.getData().putInt("step", getStep());
-                messenger.send(message);
+                iterator.remove();
             }
         } catch (RemoteException e) {
             e.printStackTrace();
@@ -379,7 +373,7 @@ public class PedometerService extends BasePedometerService {
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
-            startForeground(NOTIFY_ID, pedometerNotification.getNotification());
+            startForeground(NOTIFY_ID, new Notification());
             stopSelf();
             return super.onStartCommand(intent, flags, startId);
         }

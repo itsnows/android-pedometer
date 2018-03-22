@@ -104,7 +104,7 @@ public class StepDetector implements SensorEventListener {
         // 上一次传感器日期是否跨天
         Date lastDate = new Date(lastSensorTime);
         Date currentDate = new Date();
-        if (!TextUtils.equals(DateUtil.dateToString(lastDate, "yyyy-MM-dd"), DateUtil.dateToString(currentDate, "yyyy-MM-dd"))) {
+        if (!TextUtils.equals(DateUtil.parseDate(lastDate, "yyyy-MM-dd"), DateUtil.parseDate(currentDate, "yyyy-MM-dd"))) {
             isReset = true;
 
             lastSensorTime = DateUtil.getSystemTime();
@@ -119,7 +119,7 @@ public class StepDetector implements SensorEventListener {
         }
 
         // 当前时间是否是零点
-        if (DateUtil.isZeroTime(currentDate)) {
+        if (DateUtil.isMidnightTime(currentDate)) {
             isReset = true;
 
             systemRebootStatus = false;
@@ -183,6 +183,23 @@ public class StepDetector implements SensorEventListener {
     }
 
     /**
+     * 是否重置步数
+     *
+     * @return true：重置步数、false：不做处理
+     */
+    private boolean isResetStep() {
+        // 记录时间是否跨天
+        if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
+            return true;
+        }
+        // 当前时间是否是午夜12点
+        if (DateUtil.isMidnightTime(new Date())) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * 重置任务
      */
     public void reset(int tempStep) {
@@ -228,11 +245,11 @@ public class StepDetector implements SensorEventListener {
                 }
             }
 
-            if (!TextUtils.equals(DateUtil.dateToString(new Date(lastSensorTime), "yyyy-MM-dd"), DateUtil.dateToString(new Date(), "yyyy-MM-dd"))) {
+            if (!TextUtils.equals(DateUtil.parseDate(new Date(lastSensorTime), "yyyy-MM-dd"), DateUtil.parseDate(new Date(), "yyyy-MM-dd"))) {
                 reset(tempStep);
             }
 
-            if (DateUtil.isZeroTime(new Date())) {
+            if (DateUtil.isMidnightTime(new Date())) {
                 reset(tempStep);
             }
 

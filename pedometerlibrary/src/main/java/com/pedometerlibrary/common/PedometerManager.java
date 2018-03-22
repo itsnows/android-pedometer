@@ -11,7 +11,7 @@ import android.util.Log;
 
 import com.pedometerlibrary.Pedometer;
 import com.pedometerlibrary.receive.PedometerAlarmReceiver;
-import com.pedometerlibrary.service.PedometerJobSchedulerService;
+import com.pedometerlibrary.service.PedometerJobService;
 import com.pedometerlibrary.service.PedometerService;
 import com.pedometerlibrary.util.AlarmManagerUtil;
 import com.pedometerlibrary.util.DateUtil;
@@ -28,11 +28,11 @@ import com.pedometerlibrary.util.SystemUtil;
 
 public class PedometerManager {
     private static final String TAG = Pedometer.class.getSimpleName();
-    private static Context context;
-    private static PedometerManager manager;
-    private static PedometerOptions options;
-    private static String action;
     private static boolean isInitialized;
+    private static PedometerManager manager;
+    private Context context;
+    private PedometerOptions options;
+    private String action;
 
     /**
      * 获取计步器管理实例
@@ -56,15 +56,31 @@ public class PedometerManager {
     }
 
     /**
+     * @return Context
+     */
+    public Context getContext() {
+        return context;
+    }
+
+    /**
+     * 计步器进程是否运行
+     *
+     * @return
+     */
+    public boolean isRunning() {
+        return SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice");
+    }
+
+    /**
      * 获取计步器参数
      *
      * @return
      */
-    public static PedometerOptions getOptions() {
+    public PedometerOptions getOptions() {
         return options;
     }
 
-    public PedometerManager() {
+    private PedometerManager() {
     }
 
     public void initialize(Context context, PedometerOptions options) {
@@ -82,16 +98,11 @@ public class PedometerManager {
 
         if (!isInitialized) {
             isInitialized = true;
-            PedometerManager.context = context.getApplicationContext();
-            PedometerManager.options = options;
+            this.context = context.getApplicationContext();
+            this.options = options;
         }
 
-        if (!SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice")) {
-            setAction(PedometerService.ACTION);
-            setAlarmClock();
-            setJobScheduler();
-            start();
-        }
+        lastStart();
     }
 
     public void initialize(Context context, String action) {
@@ -109,16 +120,11 @@ public class PedometerManager {
 
         if (!isInitialized) {
             isInitialized = true;
-            PedometerManager.context = context.getApplicationContext();
-            PedometerManager.action = action;
+            this.context = context.getApplicationContext();
+            this.action = action;
         }
 
-        if (!SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice")) {
-            setAction(PedometerService.ACTION);
-            setAlarmClock();
-            setJobScheduler();
-            start();
-        }
+        lastStart();
     }
 
     /**
@@ -156,38 +162,78 @@ public class PedometerManager {
     public void setAlarmClock() {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
                 PedometerConstants.DEFAULT_REQUEST_CODE,
-                new Intent(PedometerAlarmReceiver.ACTION_ZERO_ALARM_CLOCK),
+                new Intent(PedometerAlarmReceiver.ACTION_MIDNIGHT_ALARM_CLOCK),
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        long alarmTime = DateUtil.getDateZeroTime(DateUtil.getTomorrowDate());
+        long alarmTime = DateUtil.getDateMidnightTime(DateUtil.getTomorrowDate());
         AlarmManagerUtil.setAlarm(context, alarmTime, pendingIntent);
     }
 
     /**
-     * 设置程序调度服务
+     * 设置自动重启程序调度
      */
-    public void setJobScheduler() {
+    public void setRebootJobScheduler() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            long tomorrowZeroTime = DateUtil.getDateZeroTime(DateUtil.getTomorrowDate());
-            long executeTime = tomorrowZeroTime - DateUtil.getSystemTime();
             JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            long executeTime = 10 * 1000;
             if (jobScheduler != null) {
-                ComponentName componentName = new ComponentName(context.getPackageName(), PedometerJobSchedulerService.class.getName());
-                JobInfo jobInfo = new JobInfo.Builder(PedometerJobSchedulerService.JOB_REBOOT_PEDOMETER_ID, componentName)
+                ComponentName componentName = new ComponentName(context.getPackageName(), PedometerJobService.class.getName());
+                JobInfo jobInfo = new JobInfo.Builder(PedometerJobService.JOB_REBOOT_ID, componentName)
                         .setMinimumLatency(executeTime)
                         .setOverrideDeadline(executeTime)
-                        .setPersisted(false)
-                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_NONE)
+                        .setPersisted(true)
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
                         .setRequiresCharging(true)
-                        .setRequiresDeviceIdle(false)
+                        .setRequiresDeviceIdle(true)
                         .build();
                 int request = jobScheduler.schedule(jobInfo);
                 if (request > 0) {
-                    Log.v(TAG, "JobScheduler：PedometerJobSchedulerService.JOB_REBOOT_PEDOMETER_ID");
+                    Log.v(TAG, "JobScheduler：PedometerJobService.JOB_REBOOT_ID");
+                    return;
+                }
+                Log.v(TAG, "JobScheduler：Not supported");
+            }
+        }
+    }
+
+    /**
+     * 设置午夜12点程序调度
+     */
+    public void setMidnightJobScheduler() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            long tomorrowZeroTime = DateUtil.getDateMidnightTime(DateUtil.getTomorrowDate());
+            long executeTime = tomorrowZeroTime - DateUtil.getSystemTime();
+            JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            if (jobScheduler != null) {
+                ComponentName componentName = new ComponentName(context.getPackageName(), PedometerJobService.class.getName());
+                JobInfo jobInfo = new JobInfo.Builder(PedometerJobService.JOB_MIDNIGHT_ID, componentName)
+                        .setMinimumLatency(executeTime)
+                        .setOverrideDeadline(executeTime)
+                        .setPersisted(true)
+                        .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                        .setRequiresCharging(true)
+                        .setRequiresDeviceIdle(true)
+                        .build();
+                int request = jobScheduler.schedule(jobInfo);
+                if (request > 0) {
+                    Log.v(TAG, "JobScheduler：PedometerJobService.JOB_REBOOT_ID");
                     return;
                 }
             }
         }
         Log.v(TAG, "JobScheduler：Not supported");
+    }
+
+    /**
+     * 第一次启动计步器
+     */
+    public void lastStart() {
+        if (!isRunning()) {
+            setAction(PedometerService.ACTION);
+            setRebootJobScheduler();
+            setMidnightJobScheduler();
+            setAlarmClock();
+            start();
+        }
     }
 
     /**

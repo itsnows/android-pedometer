@@ -51,22 +51,6 @@ public class SystemUtil {
     }
 
     /**
-     * 进程是否运行
-     *
-     * @return
-     */
-    public static boolean isProessRunning(Context context, String proessName) {
-        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> processs = manager.getRunningAppProcesses();
-        for (ActivityManager.RunningAppProcessInfo process : processs) {
-            if (process.processName.equals(proessName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * 获取进程名称
      *
      * @param context
@@ -83,5 +67,20 @@ public class SystemUtil {
         return null;
     }
 
+    /**
+     * 进程是否运行
+     *
+     * @return
+     */
+    public static boolean isProessRunning(Context context, String proessName) {
+        ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> processs = manager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo process : processs) {
+            if (process.processName.equals(proessName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

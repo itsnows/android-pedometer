@@ -1,5 +1,6 @@
 package com.pedometerlibrary.util;
 
+import android.annotation.SuppressLint;
 import android.os.SystemClock;
 
 import java.text.ParseException;
@@ -23,12 +24,12 @@ public class DateUtil {
     }
 
     /**
-     * 判断时间是否是零点钟
+     * 判断时间是否是午夜12点钟
      *
      * @param date
      * @return
      */
-    public static boolean isZeroTime(Date date) {
+    public static boolean isMidnightTime(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
@@ -40,12 +41,12 @@ public class DateUtil {
     }
 
     /**
-     * 获取指定日期的零点时间
+     * 获取指定日期的午夜12点钟时间
      *
      * @param date
      * @return
      */
-    public static long getDateZeroTime(Date date) {
+    public static long getDateMidnightTime(Date date) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -79,7 +80,7 @@ public class DateUtil {
      * @return
      */
     public static String getCurrentTime() {
-        return dateToString(new Date(), "yyyy-MM-dd HH:mm:ss");
+        return parseDate(new Date(), "yyyy-MM-dd HH:mm:ss");
     }
 
     /**
@@ -97,42 +98,43 @@ public class DateUtil {
     /**
      * 日期date1和日期date2相差天数
      *
+     * @param date0
      * @param date1
-     * @param date2
      * @return
      */
-    public static int differentDays(Date date1, Date date2) {
+    public static int differentDays(long date0, long date1) {
         Calendar cal1 = Calendar.getInstance();
-        cal1.setTime(date1);
+        cal1.setTimeInMillis(date0);
         Calendar cal2 = Calendar.getInstance();
-        cal2.setTime(date2);
-        int day1 = cal1.get(Calendar.DAY_OF_YEAR);
-        int day2 = cal2.get(Calendar.DAY_OF_YEAR);
+        cal2.setTimeInMillis(date1);
+        int day0 = cal1.get(Calendar.DAY_OF_YEAR);
+        int day1 = cal2.get(Calendar.DAY_OF_YEAR);
 
-        int year1 = cal1.get(Calendar.YEAR);
-        int year2 = cal2.get(Calendar.YEAR);
-        if (year1 != year2) {
+        int year0 = cal1.get(Calendar.YEAR);
+        int year1 = cal2.get(Calendar.YEAR);
+        if (year0 != year1) {
             int timeDistance = 0;
-            for (int i = year1; i < year2; i++) {
+            for (int i = year0; i < year1; i++) {
                 if (i % 4 == 0 && i % 100 != 0 || i % 400 == 0) {
                     timeDistance += 366;
                 } else {
                     timeDistance += 365;
                 }
             }
-            return timeDistance + Math.abs((day2 - day1));
+            return timeDistance + Math.abs((day1 - day0));
         } else {
-            return Math.abs(day2 - day1);
+            return Math.abs(day1 - day0);
         }
     }
 
     /**
-     * 解析时间字符串
+     * 解析日期
      *
      * @param date
      * @param pattern
      * @return
      */
+    @SuppressLint("SimpleDateFormat")
     public static Date parseDate(String date, String pattern) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         try {
@@ -144,13 +146,14 @@ public class DateUtil {
     }
 
     /**
-     * 日期转化字符串
+     * 解析日期
      *
      * @param date
      * @param pattern
      * @return
      */
-    public static String dateToString(Date date, String pattern) {
+    @SuppressLint("SimpleDateFormat")
+    public static String parseDate(Date date, String pattern) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
         return simpleDateFormat.format(date);
     }
