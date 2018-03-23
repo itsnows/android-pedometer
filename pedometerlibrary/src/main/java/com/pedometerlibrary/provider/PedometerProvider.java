@@ -1,4 +1,4 @@
-package com.pedometerlibrary.data.db;
+package com.pedometerlibrary.provider;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.pedometerlibrary.data.db.PedometerDBHelper;
 import com.pedometerlibrary.data.source.PedometerPersistenceContract;
 
 /**
@@ -24,7 +25,7 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
 public class PedometerProvider extends ContentProvider {
     public static final String SEPARATOR = "/";
     public static final String SCHEME = "content";
-    public static final String AUTHORITY = "com.pedometerlibrary.ContentProvider";
+    public static final String AUTHORITY = "com.pedometerlibrary.PedometerProvider";
     public static final String STEP_PATH = "step";
     public static final String STEP_PART_PATH = "stepPart";
     public static final int STEP_CODE = 0;

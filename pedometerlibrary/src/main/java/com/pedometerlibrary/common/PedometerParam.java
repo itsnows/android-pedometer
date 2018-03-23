@@ -3,6 +3,9 @@ package com.pedometerlibrary.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.pedometerlibrary.provider.SharedPreferenceUtil;
+
+
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
@@ -166,7 +169,7 @@ public class PedometerParam {
      * @param value   值
      */
     private static void put(Context context, String key, Object value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferenceUtil.getSharedPreference(context, FILE_NAME);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (value instanceof String) {
             editor.putString(key, (String) value);
@@ -193,7 +196,7 @@ public class PedometerParam {
      * @return 值
      */
     private static Object get(Context context, String key, Object defaultValue) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = SharedPreferenceUtil.getSharedPreference(context, FILE_NAME);
         if (defaultValue instanceof String) {
             return sharedPreferences.getString(key, (String) defaultValue);
         } else if (defaultValue instanceof Integer) {

@@ -266,14 +266,15 @@ public class PedometerService extends BasePedometerService {
             Iterator<Messenger> iterator = messengers.iterator();
             while (iterator.hasNext()) {
                 Messenger messenger = iterator.next();
-                if (messenger != null) {
-                    Message message = Message.obtain();
-                    message.what = MSG_SERVER;
-                    message.setData(new Bundle());
-                    message.getData().putInt("step", getStep());
-                    messenger.send(message);
+                if (messenger == null) {
+                    iterator.remove();
+                    continue;
                 }
-                iterator.remove();
+                Message message = Message.obtain();
+                message.what = MSG_SERVER;
+                message.setData(new Bundle());
+                message.getData().putInt("step", getStep());
+                messenger.send(message);
             }
         } catch (RemoteException e) {
             e.printStackTrace();

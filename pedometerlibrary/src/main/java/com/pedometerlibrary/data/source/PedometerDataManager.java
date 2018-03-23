@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.pedometerlibrary.data.bean.PedometerStep;
 import com.pedometerlibrary.data.bean.PedometerStepPart;
-import com.pedometerlibrary.data.db.PedometerProvider;
+import com.pedometerlibrary.provider.PedometerProvider;
 
 import java.util.ArrayList;
 import java.util.List;

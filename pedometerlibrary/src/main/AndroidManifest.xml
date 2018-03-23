@@ -94,11 +94,11 @@
             android:name=".service.PedometerJobService"
             android:enabled="true"
             android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+            android:permission="android.permission.BIND_JOB_SERVICE" />
 
         <!-- 计步器数据提供者 -->
         <provider
-            android:name=".data.db.PedometerProvider"
+            android:name=".provider.PedometerProvider"
             android:authorities="com.pedometerlibrary.PedometerProvider"
             android:enabled="true"
             android:exported="false">
@@ -106,6 +106,12 @@
                 <action android:name="com.pedometerlibrary.ContentProvider" />
             </intent-filter>
         </provider>
+
+        <!-- SharedPreferenceProvider -->
+        <provider
+            android:name="com.msplibrary.SharedPreferenceProvider"
+            android:authorities="com.msplibrary.SharedPreferenceProvider"
+            android:exported="false" />
 
     </application>
 
