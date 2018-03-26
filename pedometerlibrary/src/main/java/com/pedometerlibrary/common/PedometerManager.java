@@ -32,7 +32,6 @@ public class PedometerManager {
     private static PedometerManager manager;
     private Context context;
     private PedometerOptions options;
-    private String action;
 
     private PedometerManager() {
     }
@@ -71,7 +70,8 @@ public class PedometerManager {
      * @return
      */
     public boolean isRunning() {
-        return SystemUtil.isProessRunning(context, context.getPackageName() + ":pedometerservice");
+        String proessName = context.getPackageName() + ":pedometerservice";
+        return SystemUtil.isProessRunning(context, proessName);
     }
 
     /**
@@ -102,7 +102,7 @@ public class PedometerManager {
             this.options = options;
         }
 
-        lastStart();
+        firstStart();
     }
 
     public void initialize(Context context, String action) {
@@ -121,10 +121,10 @@ public class PedometerManager {
         if (!isInitialized) {
             isInitialized = true;
             this.context = context.getApplicationContext();
-            this.action = action;
+            setAction(action);
         }
 
-        lastStart();
+        firstStart();
     }
 
     /**
@@ -137,23 +137,56 @@ public class PedometerManager {
     }
 
     /**
-     * 设置记步器主题
+     * 获取记步通知栏
      *
-     * @param theme 记步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
+     * @return 记步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
      */
-    public void setTheme(PedometerOptions.NotificationTheme theme) {
-        if (!isIsInitialized()) {
+    public PedometerOptions.Notify getNotify() {
+        if (!isInitialized) {
+            throw new RuntimeException("Pedometer is uninitialized");
+        }
+        int notify = PedometerParam.getPedometerNotify(context);
+        if (notify == PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY) {
+            return PedometerOptions.Notify.EMPTY;
+        }
+        if (notify == PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE) {
+            return PedometerOptions.Notify.SIMPLE;
+        }
+        if (notify == PedometerConstants.PEDOMETER_NOTIFICATION_MINUTE) {
+            return PedometerOptions.Notify.MINUTE;
+        }
+        return PedometerOptions.Notify.SIMPLE;
+    }
+
+    /**
+     * 设置记步器通知栏
+     *
+     * @param notify 记步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
+     */
+    public void setNotify(PedometerOptions.Notify notify) {
+        if (!isInitialized) {
             throw new RuntimeException("Pedometer is uninitialized");
         }
         Intent intent = new Intent(PedometerService.ACTION_THEME);
-        if (theme == PedometerOptions.NotificationTheme.EMPTY) {
-            intent.putExtra("theme", 0);
-        } else if (theme == PedometerOptions.NotificationTheme.SIMPLE) {
-            intent.putExtra("theme", 1);
-        } else {
-            intent.putExtra("theme", 2);
+        if (notify != null) {
+            if (notify == PedometerOptions.Notify.EMPTY) {
+                intent.putExtra("notify", PedometerConstants.PEDOMETER_NOTIFICATION_EMPTY);
+            } else if (notify == PedometerOptions.Notify.SIMPLE) {
+                intent.putExtra("notify", PedometerConstants.PEDOMETER_NOTIFICATION_SIMPLE);
+            } else {
+                intent.putExtra("notify", PedometerConstants.PEDOMETER_NOTIFICATION_MINUTE);
+            }
+            context.sendBroadcast(intent);
         }
-        context.sendBroadcast(intent);
+    }
+
+    /**
+     * 是否开启记步器通知栏
+     *
+     * @return
+     */
+    public boolean isNotifyEnabled() {
+        return getNotify() != PedometerOptions.Notify.EMPTY;
     }
 
     /**
@@ -226,7 +259,7 @@ public class PedometerManager {
     /**
      * 第一次启动记步器
      */
-    public void lastStart() {
+    public void firstStart() {
         if (!isRunning()) {
             setAction(PedometerService.ACTION);
             setRebootJobScheduler();

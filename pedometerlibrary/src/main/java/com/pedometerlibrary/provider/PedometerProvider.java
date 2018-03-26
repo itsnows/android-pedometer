@@ -28,8 +28,8 @@ public class PedometerProvider extends ContentProvider {
     public static final String AUTHORITY = "com.pedometerlibrary.PedometerProvider";
     public static final String STEP_PATH = "step";
     public static final String STEP_PART_PATH = "stepPart";
-    public static final int STEP_CODE = 0;
-    public static final int STEP_PART_CODE = 1;
+    public static final int STEP_CODE = 1;
+    public static final int STEP_PART_CODE = 2;
     private static final String TAG = PedometerProvider.class.getSimpleName();
     private UriMatcher uriMatcher;
     private PedometerDBHelper dbHelper;

@@ -72,6 +72,7 @@
             android:name=".service.PedometerService"
             android:enabled="true"
             android:exported="true"
+            android:hardwareAccelerated="false"
             android:label="@string/action_pedometer_service_label"
             android:priority="1000"
             android:process=":pedometerservice"
@@ -102,13 +103,10 @@
             android:authorities="com.pedometerlibrary.PedometerProvider"
             android:enabled="true"
             android:exported="true">
-            <!--android:process=":pedometerservice">-->
             <intent-filter>
                 <action android:name="com.pedometerlibrary.ContentProvider" />
             </intent-filter>
         </provider>
-
-        <!-- SharedPreferenceProvider -->
 
     </application>
 

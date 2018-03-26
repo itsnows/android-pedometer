@@ -26,12 +26,12 @@ public class DateUtil {
     /**
      * 判断时间是否是午夜12点钟
      *
-     * @param date
+     * @param time
      * @return
      */
-    public static boolean isMidnightTime(Date date) {
+    public static boolean isMidnightTime(long time) {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
+        calendar.setTimeInMillis(time);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if (hour == 0 && minute == 0) {
@@ -96,17 +96,17 @@ public class DateUtil {
     }
 
     /**
-     * 日期date1和日期date2相差天数
+     * 两个时间相差天数
      *
-     * @param date0
-     * @param date1
+     * @param time0
+     * @param time1
      * @return
      */
-    public static int differentDays(long date0, long date1) {
+    public static int differentDays(long time0, long time1) {
         Calendar calendar0 = Calendar.getInstance();
-        calendar0.setTimeInMillis(date0);
+        calendar0.setTimeInMillis(time0);
         Calendar calendar1 = Calendar.getInstance();
-        calendar1.setTimeInMillis(date1);
+        calendar1.setTimeInMillis(time1);
         int day0 = calendar0.get(Calendar.DAY_OF_YEAR);
         int day1 = calendar1.get(Calendar.DAY_OF_YEAR);
 

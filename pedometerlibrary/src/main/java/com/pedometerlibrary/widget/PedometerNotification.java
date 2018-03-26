@@ -63,7 +63,7 @@ public class PedometerNotification {
     /**
      * 获取通知栏
      *
-     * @return Notification
+     * @return Notify
      */
     public Notification getNotification() {
         return builder.build();

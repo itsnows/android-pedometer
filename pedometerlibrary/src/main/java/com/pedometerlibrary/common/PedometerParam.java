@@ -21,11 +21,8 @@ public class PedometerParam {
     private static final String KEY_NAME_SYSTEM_BOOT_TIME = "system_boot_time";
     private static final String KEY_NAME_SYSTEM_REBOOT_STATUS = "system_reboot_status";
     private static final String KEY_NAME_PEDOMETER_ACTION = "pedometer_action";
-    private static final String KEY_NAME_PEDOMETER_NOTIFICATION = "pedometer_notification";
-    private static final String KEY_NAME_PEDOMETER_NOTIFICATION_SAMLL_ICON = "pedometer_notification_samll_icon";
-    private static final String KEY_NAME_PEDOMETER_NOTIFICATION_LARGE_ICON = "pedometer_notification_large_Icon";
-    private static final String KEY_NAME_PEDOMETER_NOTIFICATION_TARGET = "pedometer_notification_target";
-    private static final String KEY_NAME_PEDOMETER_NOTIFICATION_ACTION = "pedometer_notification_action";
+    private static final String KEY_NAME_PEDOMETER_NOTIFY = "pedometer_notify";
+    private static final String KEY_NAME_PEDOMETER_TARGET = "pedometer_target";
 
     /**
      * 当前App步数
@@ -94,7 +91,7 @@ public class PedometerParam {
     }
 
     /**
-     * 记步器Action
+     * 记步器隐式意图
      */
     public static String getPedometerAction(Context context) {
         return (String) get(context, KEY_NAME_PEDOMETER_ACTION, "com.pedometer.SimplePedometerService");
@@ -105,58 +102,25 @@ public class PedometerParam {
     }
 
     /**
-     * 记步器通知栏主题
+     * 记步器通知栏
      */
-    public static int getPedometerNotification(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION, 1);
+    public static int getPedometerNotify(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFY, 1);
     }
 
-    public static void setPedometerNotification(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFICATION, value);
+    public static void setPedometerNotify(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_NOTIFY, value);
     }
 
     /**
-     * 记步器通知栏主题
+     * 记步器目标
      */
-    public static int getPedometerNotificationSamllIcon(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_SAMLL_ICON, 1);
+    public static int getPedometerTarget(Context context) {
+        return (int) get(context, KEY_NAME_PEDOMETER_TARGET, 7000);
     }
 
-    public static void setPedometerNotificationSamllIcon(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFICATION_SAMLL_ICON, value);
-    }
-
-    /**
-     * 记步器通知栏主题
-     */
-    public static int getPedometerNotificationLargeIcon(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_LARGE_ICON, 1);
-    }
-
-    public static void setPedometerNotificationLargeIcon(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFICATION_LARGE_ICON, value);
-    }
-
-    /**
-     * 记步器通知栏目标
-     */
-    public static int getPedometerNotificationTarget(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_TARGET, 7000);
-    }
-
-    public static void setPedometerNotificationTarget(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFICATION_TARGET, value);
-    }
-
-    /**
-     * 记步器通知栏意图
-     */
-    public static int getPedometerNotificationAction(Context context) {
-        return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_ACTION, 7000);
-    }
-
-    public static void setPedometerNotificationAction(Context context, int value) {
-        put(context, KEY_NAME_PEDOMETER_NOTIFICATION_ACTION, value);
+    public static void setPedometerTarget(Context context, int value) {
+        put(context, KEY_NAME_PEDOMETER_TARGET, value);
     }
 
     /**
@@ -167,7 +131,7 @@ public class PedometerParam {
      * @param value   值
      */
     private static void put(Context context, String key, Object value) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (value instanceof String) {
             editor.putString(key, (String) value);
@@ -194,7 +158,7 @@ public class PedometerParam {
      * @return 值
      */
     private static Object get(Context context, String key, Object defaultValue) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_MULTI_PROCESS);
         if (defaultValue instanceof String) {
             return sharedPreferences.getString(key, (String) defaultValue);
         } else if (defaultValue instanceof Integer) {

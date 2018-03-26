@@ -10,8 +10,6 @@ import com.pedometerlibrary.common.PedometerParam;
 import com.pedometerlibrary.util.DateUtil;
 import com.pedometerlibrary.util.LogUtil;
 
-import java.util.Date;
-
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
@@ -210,7 +208,7 @@ public class AccelerometerStepDetector implements SensorEventListener {
         if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
             return true;
         }
-        if (DateUtil.isMidnightTime(new Date())) {
+        if (DateUtil.isMidnightTime(DateUtil.getSystemTime())) {
             return true;
         }
         return false;

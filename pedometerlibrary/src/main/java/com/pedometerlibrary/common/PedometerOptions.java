@@ -1,7 +1,5 @@
 package com.pedometerlibrary.common;
 
-import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.DrawableRes;
 
 /**
@@ -14,39 +12,49 @@ import android.support.annotation.DrawableRes;
 public class PedometerOptions {
 
     /**
+     * 记步器小图标
+     */
+    private final int samllIcon;
+
+    /**
+     * 记步器大图标
+     */
+    private final int largeIcon;
+
+    /**
      * 记步器目标
      */
     private final int target;
 
     /**
-     * 记步器状态通知栏小图标
-     */
-    private final int samllIcon;
-
-    /**
-     * 记步器状态通知栏大图标
-     */
-    private final int largeIcon;
-
-    /**
      * 记步器通知栏
      */
-    private final NotificationTheme notificationTheme;
-
-    /**
-     * 记步器通知栏意图
-     */
-    private final NotificationAction notificationAction;
+    private final Notify notify;
 
     private PedometerOptions(Builder builder) {
-        this.target = builder.target;
         this.samllIcon = builder.samllIcon;
         this.largeIcon = builder.largeIcon;
-        this.notificationTheme = builder.notificationTheme;
-        this.notificationAction = builder.notificationAction;
+        this.target = builder.target;
+        this.notify = builder.notify;
     }
 
-    public enum NotificationTheme {
+    public int getSamllIcon() {
+        return samllIcon;
+    }
+
+    public int getLargeIcon() {
+        return largeIcon;
+    }
+
+    public int getTarget() {
+        return target;
+    }
+
+    public Notify getNotify() {
+        return notify;
+    }
+
+    public enum Notify {
         EMPTY(),
 
         SIMPLE(),
@@ -54,25 +62,15 @@ public class PedometerOptions {
         MINUTE()
     }
 
-    public interface NotificationAction {
-        void onAction(Context context, Bundle data);
-    }
-
     public static class Builder {
-        private int target;
         @DrawableRes
         private int samllIcon;
         @DrawableRes
         private int largeIcon;
-        private NotificationTheme notificationTheme;
-        private NotificationAction notificationAction;
+        private Notify notify;
+        private int target;
 
         public Builder() {
-        }
-
-        public Builder setTarget(int target) {
-            this.target = target;
-            return this;
         }
 
         public Builder setSamllIcon(int samllIcon) {
@@ -85,13 +83,13 @@ public class PedometerOptions {
             return this;
         }
 
-        public Builder setNotificationTheme(NotificationTheme notificationTheme) {
-            this.notificationTheme = notificationTheme;
+        public Builder setTarget(int target) {
+            this.target = target;
             return this;
         }
 
-        public Builder setNotificationAction(NotificationAction notificationAction) {
-            this.notificationAction = notificationAction;
+        public Builder setNotify(Notify notify) {
+            this.notify = notify;
             return this;
         }
 

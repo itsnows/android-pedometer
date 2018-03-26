@@ -166,23 +166,6 @@ public class PedometerClient {
     }
 
     /**
-     * 记步器服务连接
-     */
-    private class PedometerServiceConnection implements ServiceConnection {
-
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            serverMessenger = new Messenger(service);
-            connectServer();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            connection = null;
-        }
-    }
-
-    /**
      * 客服端消息处理
      */
     public static class ClientHanlder extends Handler {
@@ -215,6 +198,23 @@ public class PedometerClient {
                     break;
             }
             super.handleMessage(msg);
+        }
+    }
+
+    /**
+     * 记步器服务连接
+     */
+    private class PedometerServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            serverMessenger = new Messenger(service);
+            connectServer();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            connection = null;
         }
     }
 

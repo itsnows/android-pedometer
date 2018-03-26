@@ -1,9 +1,6 @@
 package com.pedometer;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
 
 import com.pedometerlibrary.Pedometer;
 import com.pedometerlibrary.common.PedometerOptions;
@@ -24,10 +21,8 @@ public class App extends Application {
         super.onCreate();
         String processName = SystemUtil.getProcessName(this);
         if (PROCESS_PEDOMETER.equals(processName)) {
-            initDefault();
             // initCustom();
         }
-
         initDefault();
     }
 
@@ -35,21 +30,11 @@ public class App extends Application {
      * 默认记步器
      */
     private void initDefault() {
-        Pedometer.initialize(this,
-                new PedometerOptions.Builder()
-                        .setSamllIcon(R.mipmap.ic_launcher)
-                        .setLargeIcon(R.mipmap.ic_launcher)
-                        .setNotificationTheme(PedometerOptions.NotificationTheme.SIMPLE)
-                        .setNotificationAction(new PedometerOptions.NotificationAction() {
-                            @Override
-                            public void onAction(Context context, Bundle data) {
-                                Intent intent = new Intent(context, StartActivity.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                intent.putExtras(data);
-                                context.startActivity(intent);
-                            }
-                        })
-                        .build());
+        Pedometer.initialize(this, new PedometerOptions.Builder()
+                .setSamllIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(R.mipmap.ic_launcher)
+                .setNotify(PedometerOptions.Notify.SIMPLE)
+                .build());
     }
 
     /**

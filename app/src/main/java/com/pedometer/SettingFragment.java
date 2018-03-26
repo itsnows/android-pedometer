@@ -10,8 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.pedometerlibrary.common.PedometerManager;
 import com.pedometerlibrary.common.PedometerOptions;
+import com.pedometerlibrary.common.PedometerManager;
 
 /**
  * Author: SXF
@@ -41,18 +41,22 @@ public class SettingFragment extends Fragment implements View.OnClickListener {
         rlNotificationSwitchParent = view.findViewById(R.id.rl_fragment_setting_notification_switch_parent);
         rlNotificationSwitchParent.setOnClickListener(this);
         scNotificationSwitch = view.findViewById(R.id.sc_fragment_setting_notification_switch);
+        if (PedometerManager.getInstance().getNotify() == PedometerOptions.Notify.EMPTY) {
+            scNotificationSwitch.setChecked(false);
+        } else {
+            scNotificationSwitch.setChecked(true);
+        }
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.rl_fragment_setting_notification_switch_parent:
-                PedometerManager manager = PedometerManager.getInstance();
                 if (scNotificationSwitch.isChecked()) {
-                    manager.setTheme(PedometerOptions.NotificationTheme.EMPTY);
+                    PedometerManager.getInstance().setNotify(PedometerOptions.Notify.EMPTY);
                     scNotificationSwitch.setChecked(false);
                 } else {
-                    manager.setTheme(PedometerOptions.NotificationTheme.SIMPLE);
+                    PedometerManager.getInstance().setNotify(PedometerOptions.Notify.SIMPLE);
                     scNotificationSwitch.setChecked(true);
                 }
                 break;

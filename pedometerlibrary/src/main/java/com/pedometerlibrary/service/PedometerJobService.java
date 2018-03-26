@@ -7,10 +7,10 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.RequiresApi;
-import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerManager;
 import com.pedometerlibrary.receive.PedometerAlarmReceiver;
+import com.pedometerlibrary.util.LogUtil;
 
 import java.lang.ref.SoftReference;
 
@@ -36,12 +36,12 @@ public class PedometerJobService extends JobService {
     public void onCreate() {
         super.onCreate();
         jobHandler = new JobHandler(this);
-        Log.d(TAG, "onCreate");
+        LogUtil.d(TAG, "onCreate");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
+        LogUtil.d(TAG, "onStartCommand");
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -51,16 +51,13 @@ public class PedometerJobService extends JobService {
         message.what = params.getJobId();
         message.obj = params;
         jobHandler.sendMessage(message);
-        Log.d(TAG, "onStartJob");
-        if (!PedometerManager.getInstance().isRunning()) {
-            PedometerManager.getInstance().start();
-        }
+        LogUtil.d(TAG, "onStartJob");
         return true;
     }
 
     @Override
     public boolean onStopJob(JobParameters params) {
-        Log.d(TAG, "onStopJob");
+        LogUtil.d(TAG, "onStopJob");
         return false;
     }
 

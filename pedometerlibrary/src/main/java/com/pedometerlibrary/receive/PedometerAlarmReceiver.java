@@ -8,8 +8,6 @@ import android.util.Log;
 import com.pedometerlibrary.common.PedometerManager;
 import com.pedometerlibrary.util.DateUtil;
 
-import java.util.Date;
-
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
@@ -32,7 +30,7 @@ public class PedometerAlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (ACTION_MIDNIGHT_ALARM_CLOCK.equals(action)) {
-            if (DateUtil.isMidnightTime(new Date())) {
+            if (DateUtil.isMidnightTime(DateUtil.getSystemTime())) {
 
             }
             executeZeroClockTask();

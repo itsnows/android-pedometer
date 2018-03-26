@@ -201,8 +201,8 @@ public class PedometerService extends BasePedometerService {
             statusActionReceiver.registerReceiver(this);
         }
 
-        target = PedometerParam.getPedometerNotificationTarget(this);
-        theme = PedometerParam.getPedometerNotification(this);
+        target = PedometerParam.getPedometerTarget(this);
+        theme = PedometerParam.getPedometerNotify(this);
         initNotify();
     }
 
@@ -297,7 +297,8 @@ public class PedometerService extends BasePedometerService {
      * 通知意图
      */
     private PendingIntent getPendingIntent(int flag) {
-        return PendingIntent.getBroadcast(this, 0, new Intent(this, PedometerStatusActionReceiver.class), flag);
+        Intent intent = new Intent(this, PedometerStatusActionReceiver.class);
+        return PendingIntent.getBroadcast(this, 0, intent, flag);
     }
 
     /**
@@ -441,7 +442,7 @@ public class PedometerService extends BasePedometerService {
             } else if (ACTION_THEME.equals(action)) {
                 if (service != null) {
                     service.theme = intent.getIntExtra("theme", 1);
-                    PedometerParam.setPedometerNotification(service, service.theme);
+                    PedometerParam.setPedometerNotify(service, service.theme);
                     service.initNotify();
                     service.sendMessageToNotify();
                 }

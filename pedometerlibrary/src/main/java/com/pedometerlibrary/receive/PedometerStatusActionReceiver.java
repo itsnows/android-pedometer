@@ -21,8 +21,9 @@ public class PedometerStatusActionReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         if (ACTION.equals(action)) {
-
-
+            Intent dispatchIntent = new Intent(intent);
+            dispatchIntent.setAction("com.pedometer.STATUS_ACTION");
+            context.sendBroadcast(dispatchIntent);
         }
         Log.d(TAG, action);
     }

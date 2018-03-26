@@ -8,9 +8,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:theme="@style/AppTheme"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:supportsRtl="true">
         <activity
             android:name=".StartActivity"
             android:theme="@style/AppTheme.Translucent">
@@ -55,12 +55,13 @@
 
         <!-- 记步器警报广播 -->
         <receiver
-            android:name="com.pedometerlibrary.receive.PedometerStatusActionReceiver"
+            android:name=".StepStatusReceiver"
             android:enabled="true"
             android:exported="true"
             tools:ignore="ExportedReceiver">
             <intent-filter>
                 <action android:name="intent.action.START_UPLOAD_CRASH" />
+                <action android:name="com.pedometer.STATUS_ACTION" />
             </intent-filter>
         </receiver>
 
