@@ -95,7 +95,7 @@
     <string name="homepage_tabs_status">状态</string>
     <string name="homepage_tabs_statistics">统计</string>
     <string name="homepage_tabs_setting">设置</string>
-    <string name="title_activity_home_pager">计步器</string>
+    <string name="title_activity_home_pager">记步器</string>
     <string name="fragment_setting_advanced">高级</string>
-    <string name="fragment_setting_notification_switch">计步器通知栏</string>
+    <string name="fragment_setting_notification_switch">记步器通知栏</string>
 </resources>

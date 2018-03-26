@@ -12,7 +12,7 @@ import com.pedometerlibrary.data.source.PedometerPersistenceContract;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/12 15:12
  * <p>
- * 计步器数据库助手
+ * 记步器数据库助手
  */
 public class PedometerDBHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "pedometer.db";

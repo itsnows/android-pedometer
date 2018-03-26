@@ -1,5 +1,7 @@
 package com.pedometer;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,8 +22,15 @@ import com.pedometerlibrary.service.PedometerService;
  * StatusFragment
  */
 public class StatusFragment extends Fragment {
+    private Context context;
     private TextView tvStep;
     private PedometerClient pedometerClient;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
 
     @Nullable
     @Override
@@ -38,16 +47,15 @@ public class StatusFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    private void initView(View view) {
-        tvStep = view.findViewById(R.id.tv_fragment_status_step);
-        pedometerClient = PedometerClient.add(getActivity(), new PedometerService.CallBack() {
+        pedometerClient = PedometerClient.add((Activity) context, new PedometerService.CallBack() {
             @Override
             public void onStep(int step) {
-                tvStep.setText(getString(R.string.activity_main_step, step));
+                if (context != null) {
+                    tvStep.setText(context.getString(R.string.activity_main_step, step));
+                }
             }
         });
+
     }
 
     @Override
@@ -62,4 +70,9 @@ public class StatusFragment extends Fragment {
             pedometerClient.remove();
         }
     }
+
+    private void initView(View view) {
+        tvStep = view.findViewById(R.id.tv_fragment_status_step);
+    }
+
 }

@@ -21,6 +21,8 @@ import android.util.Log;
 import com.pedometerlibrary.R;
 import com.pedometerlibrary.common.PedometerConstants;
 import com.pedometerlibrary.common.PedometerParam;
+import com.pedometerlibrary.data.source.PedometerDataManager;
+import com.pedometerlibrary.data.source.PedometerDataSource;
 import com.pedometerlibrary.receive.PedometerStatusActionReceiver;
 import com.pedometerlibrary.widget.PedometerNotification;
 import com.pedometerlibrary.widget.SimplePedometerNotification;
@@ -38,7 +40,6 @@ import java.util.List;
  * PedometerService
  */
 public class PedometerService extends BasePedometerService {
-    private static final String TAG = PedometerService.class.getSimpleName();
     /**
      * 记步服务隐式意图
      */
@@ -67,6 +68,7 @@ public class PedometerService extends BasePedometerService {
      * UI消息
      */
     public static final int MSG_UI = 0x1035;
+    private static final String TAG = PedometerService.class.getSimpleName();
     /**
      * 通知栏ID
      */
@@ -83,6 +85,12 @@ public class PedometerService extends BasePedometerService {
      * 记步服务广播
      */
     private CommandReceiver serviceReceiver;
+
+    /**
+     * 记步服务数据
+     */
+    private PedometerDataSource pedometerDataSource;
+
     /**
      * 记步服务端
      */
@@ -177,6 +185,10 @@ public class PedometerService extends BasePedometerService {
         if (serviceReceiver == null) {
             serviceReceiver = new CommandReceiver(this);
             serviceReceiver.registerReceiver(this);
+        }
+
+        if (pedometerDataSource == null) {
+            pedometerDataSource = new PedometerDataManager(this);
         }
 
         if (serverMessenger == null) {
@@ -289,7 +301,7 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步服务回调接口
+     * 记步服务回调接口
      */
     public static abstract class CallBack {
 
@@ -368,32 +380,7 @@ public class PedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步器模拟服务
-     */
-    private class AnalogServer extends Service {
-
-        @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
-            startForeground(NOTIFY_ID, new Notification());
-            stopSelf();
-            return super.onStartCommand(intent, flags, startId);
-        }
-
-        @Nullable
-        @Override
-        public IBinder onBind(Intent intent) {
-            return null;
-        }
-
-        @Override
-        public void onDestroy() {
-            stopForeground(true);
-            super.onDestroy();
-        }
-    }
-
-    /**
-     * 计步器控制广播
+     * 记步器控制广播
      */
     private static class CommandReceiver extends BroadcastReceiver {
         private SoftReference<PedometerService> softReference;
@@ -481,6 +468,31 @@ public class PedometerService extends BasePedometerService {
             context.unregisterReceiver(this);
         }
 
+    }
+
+    /**
+     * 记步器模拟服务
+     */
+    private class AnalogServer extends Service {
+
+        @Override
+        public int onStartCommand(Intent intent, int flags, int startId) {
+            startForeground(NOTIFY_ID, new Notification());
+            stopSelf();
+            return super.onStartCommand(intent, flags, startId);
+        }
+
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onDestroy() {
+            stopForeground(true);
+            super.onDestroy();
+        }
     }
 
 }

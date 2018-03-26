@@ -3,15 +3,13 @@ package com.pedometerlibrary.common;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.pedometerlibrary.provider.SharedPreferenceUtil;
-
 
 /**
  * Author: SXF
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2017/12/18 0:06
  * <p>
- * 计步器参数
+ * 记步器参数
  */
 
 public class PedometerParam {
@@ -96,7 +94,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器Action
+     * 记步器Action
      */
     public static String getPedometerAction(Context context) {
         return (String) get(context, KEY_NAME_PEDOMETER_ACTION, "com.pedometer.SimplePedometerService");
@@ -107,7 +105,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器通知栏主题
+     * 记步器通知栏主题
      */
     public static int getPedometerNotification(Context context) {
         return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION, 1);
@@ -118,7 +116,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器通知栏主题
+     * 记步器通知栏主题
      */
     public static int getPedometerNotificationSamllIcon(Context context) {
         return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_SAMLL_ICON, 1);
@@ -129,7 +127,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器通知栏主题
+     * 记步器通知栏主题
      */
     public static int getPedometerNotificationLargeIcon(Context context) {
         return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_LARGE_ICON, 1);
@@ -140,7 +138,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器通知栏目标
+     * 记步器通知栏目标
      */
     public static int getPedometerNotificationTarget(Context context) {
         return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_TARGET, 7000);
@@ -151,7 +149,7 @@ public class PedometerParam {
     }
 
     /**
-     * 计步器通知栏意图
+     * 记步器通知栏意图
      */
     public static int getPedometerNotificationAction(Context context) {
         return (int) get(context, KEY_NAME_PEDOMETER_NOTIFICATION_ACTION, 7000);
@@ -169,7 +167,7 @@ public class PedometerParam {
      * @param value   值
      */
     private static void put(Context context, String key, Object value) {
-        SharedPreferences sharedPreferences = SharedPreferenceUtil.getSharedPreference(context, FILE_NAME);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         if (value instanceof String) {
             editor.putString(key, (String) value);
@@ -196,7 +194,7 @@ public class PedometerParam {
      * @return 值
      */
     private static Object get(Context context, String key, Object defaultValue) {
-        SharedPreferences sharedPreferences = SharedPreferenceUtil.getSharedPreference(context, FILE_NAME);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(FILE_NAME, Context.MODE_PRIVATE);
         if (defaultValue instanceof String) {
             return sharedPreferences.getString(key, (String) defaultValue);
         } else if (defaultValue instanceof Integer) {

@@ -206,6 +206,15 @@ public class SimplePedometerNotification extends PedometerNotification {
     }
 
     /**
+     * 获取进度条最大进度
+     *
+     * @return
+     */
+    public int getMaxProgress() {
+        return drawable.getMaxProgress();
+    }
+
+    /**
      * 设置进度条最大大进度
      *
      * @param maxProgress
@@ -218,6 +227,15 @@ public class SimplePedometerNotification extends PedometerNotification {
     }
 
     /**
+     * 获取进度条当前进度
+     *
+     * @return
+     */
+    public int getCurrentProgress() {
+        return drawable.getCurrentProgress();
+    }
+
+    /**
      * 设置进度当前进度
      *
      * @param currentProgress
@@ -227,24 +245,6 @@ public class SimplePedometerNotification extends PedometerNotification {
         drawable.setCurrentProgress(currentProgress);
         setProgress();
         return this;
-    }
-
-    /**
-     * 获取进度条最大进度
-     *
-     * @return
-     */
-    public int getMaxProgress() {
-        return drawable.getMaxProgress();
-    }
-
-    /**
-     * 获取进度条当前进度
-     *
-     * @return
-     */
-    public int getCurrentProgress() {
-        return drawable.getCurrentProgress();
     }
 
 

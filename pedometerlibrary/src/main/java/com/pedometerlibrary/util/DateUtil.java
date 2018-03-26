@@ -103,15 +103,15 @@ public class DateUtil {
      * @return
      */
     public static int differentDays(long date0, long date1) {
-        Calendar cal1 = Calendar.getInstance();
-        cal1.setTimeInMillis(date0);
-        Calendar cal2 = Calendar.getInstance();
-        cal2.setTimeInMillis(date1);
-        int day0 = cal1.get(Calendar.DAY_OF_YEAR);
-        int day1 = cal2.get(Calendar.DAY_OF_YEAR);
+        Calendar calendar0 = Calendar.getInstance();
+        calendar0.setTimeInMillis(date0);
+        Calendar calendar1 = Calendar.getInstance();
+        calendar1.setTimeInMillis(date1);
+        int day0 = calendar0.get(Calendar.DAY_OF_YEAR);
+        int day1 = calendar1.get(Calendar.DAY_OF_YEAR);
 
-        int year0 = cal1.get(Calendar.YEAR);
-        int year1 = cal2.get(Calendar.YEAR);
+        int year0 = calendar0.get(Calendar.YEAR);
+        int year1 = calendar1.get(Calendar.YEAR);
         if (year0 != year1) {
             int timeDistance = 0;
             for (int i = year0; i < year1; i++) {

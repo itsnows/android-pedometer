@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <!--计步器首页界面-->
+        <!--记步器首页界面-->
         <activity
             android:name=".HomePagerActivity"
             android:label="@string/title_activity_home_pager"
@@ -32,7 +32,7 @@
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!-- 自定义计步器服务 -->
+        <!-- 自定义记步器服务 -->
         <service
             android:name=".CustomPedometerService"
             android:enabled="true"
@@ -53,7 +53,7 @@
             </intent-filter>
         </service>
 
-        <!-- 计步器警报广播 -->
+        <!-- 记步器警报广播 -->
         <receiver
             android:name="com.pedometerlibrary.receive.PedometerStatusActionReceiver"
             android:enabled="true"

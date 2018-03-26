@@ -26,17 +26,17 @@ public class PedometerConstants {
     public static final int REQUEST_CODE_DISCONNECT = 0x5231;
 
     /**
-     * 计步状态空白通知栏（不显示通知栏）
+     * 记步状态空白通知栏（不显示通知栏）
      */
     public static final int PEDOMETER_NOTIFICATION_EMPTY = 0;
 
     /**
-     * 计步状态简单通知栏
+     * 记步状态简单通知栏
      */
     public static final int PEDOMETER_NOTIFICATION_SIMPLE = 1;
 
     /**
-     * 计步状态全面通知栏
+     * 记步状态全面通知栏
      */
     public static final int PEDOMETER_NOTIFICATION_MINUTE = 2;
 

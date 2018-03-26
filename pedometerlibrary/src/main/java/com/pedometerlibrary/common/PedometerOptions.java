@@ -1,6 +1,5 @@
 package com.pedometerlibrary.common;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
@@ -15,27 +14,27 @@ import android.support.annotation.DrawableRes;
 public class PedometerOptions {
 
     /**
-     * 计步器目标
+     * 记步器目标
      */
     private final int target;
 
     /**
-     * 计步器状态通知栏小图标
+     * 记步器状态通知栏小图标
      */
     private final int samllIcon;
 
     /**
-     * 计步器状态通知栏大图标
+     * 记步器状态通知栏大图标
      */
     private final int largeIcon;
 
     /**
-     * 计步器通知栏
+     * 记步器通知栏
      */
     private final NotificationTheme notificationTheme;
 
     /**
-     * 计步器通知栏意图
+     * 记步器通知栏意图
      */
     private final NotificationAction notificationAction;
 
@@ -45,6 +44,18 @@ public class PedometerOptions {
         this.largeIcon = builder.largeIcon;
         this.notificationTheme = builder.notificationTheme;
         this.notificationAction = builder.notificationAction;
+    }
+
+    public enum NotificationTheme {
+        EMPTY(),
+
+        SIMPLE(),
+
+        MINUTE()
+    }
+
+    public interface NotificationAction {
+        void onAction(Context context, Bundle data);
     }
 
     public static class Builder {
@@ -87,18 +98,6 @@ public class PedometerOptions {
         public PedometerOptions build() {
             return new PedometerOptions(this);
         }
-    }
-
-    public enum NotificationTheme {
-        EMPTY(),
-
-        SIMPLE(),
-
-        MINUTE()
-    }
-
-    public interface NotificationAction {
-        void onAction(Context context, Bundle data);
     }
 
 }

@@ -20,7 +20,7 @@ import java.util.List;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/12 14:50
  * <p>
- * 计步器数据管理
+ * 记步器数据管理
  */
 public class PedometerDataManager implements PedometerDataSource {
     private static final String TAG = PedometerDataManager.class.getSimpleName();

@@ -34,8 +34,11 @@ public class PedometerManager {
     private PedometerOptions options;
     private String action;
 
+    private PedometerManager() {
+    }
+
     /**
-     * 获取计步器管理实例
+     * 获取记步器管理实例
      *
      * @return PedometerManager
      */
@@ -47,7 +50,7 @@ public class PedometerManager {
     }
 
     /**
-     * 是否初始化计步器
+     * 是否初始化记步器
      *
      * @return
      */
@@ -63,7 +66,7 @@ public class PedometerManager {
     }
 
     /**
-     * 计步器进程是否运行
+     * 记步器进程是否运行
      *
      * @return
      */
@@ -72,15 +75,12 @@ public class PedometerManager {
     }
 
     /**
-     * 获取计步器参数
+     * 获取记步器参数
      *
      * @return
      */
     public PedometerOptions getOptions() {
         return options;
-    }
-
-    private PedometerManager() {
     }
 
     public void initialize(Context context, PedometerOptions options) {
@@ -128,18 +128,18 @@ public class PedometerManager {
     }
 
     /**
-     * 绑定计步器务隐式意图
+     * 绑定记步器务隐式意图
      *
-     * @param action 计步器活动隐式意图
+     * @param action 记步器活动隐式意图
      */
     public void setAction(String action) {
         PedometerParam.setPedometerAction(context, action);
     }
 
     /**
-     * 设置计步器主题
+     * 设置记步器主题
      *
-     * @param theme 计步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
+     * @param theme 记步器主题 EMPTY：空白主题、SIMPLE：简单主题、MINUTE：详细主题
      */
     public void setTheme(PedometerOptions.NotificationTheme theme) {
         if (!isIsInitialized()) {
@@ -224,7 +224,7 @@ public class PedometerManager {
     }
 
     /**
-     * 第一次启动计步器
+     * 第一次启动记步器
      */
     public void lastStart() {
         if (!isRunning()) {
@@ -237,7 +237,7 @@ public class PedometerManager {
     }
 
     /**
-     * 启动计步器
+     * 启动记步器
      */
     public void start() {
         Intent intent = new Intent(PedometerParam.getPedometerAction(context));

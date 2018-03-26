@@ -33,7 +33,7 @@
         android:persistent="true"
         android:supportsRtl="true">
 
-        <!--计步器开机广播-->
+        <!--记步器开机广播-->
         <receiver
             android:name=".receive.PedometerBootCompletedReceiver"
             android:enabled="true"
@@ -44,7 +44,7 @@
             </intent-filter>
         </receiver>
 
-        <!--计步器关机广播-->
+        <!--记步器关机广播-->
         <receiver
             android:name=".receive.PedometerShutdownReceiver"
             android:enabled="true"
@@ -55,7 +55,7 @@
             </intent-filter>
         </receiver>
 
-        <!--计步器警报广播-->
+        <!--记步器警报广播-->
         <receiver
             android:name=".receive.PedometerAlarmReceiver"
             android:enabled="true"
@@ -67,7 +67,7 @@
             </intent-filter>
         </receiver>
 
-        <!--计步器服务-->
+        <!--记步器服务-->
         <service
             android:name=".service.PedometerService"
             android:enabled="true"
@@ -89,29 +89,26 @@
             </intent-filter>
         </service>
 
-        <!--计步器程序调度服务-->
+        <!--记步器程序调度服务-->
         <service
             android:name=".service.PedometerJobService"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE" />
 
-        <!-- 计步器数据提供者 -->
+        <!-- 记步器数据提供者 -->
         <provider
             android:name=".provider.PedometerProvider"
             android:authorities="com.pedometerlibrary.PedometerProvider"
             android:enabled="true"
-            android:exported="false">
+            android:exported="true">
+            <!--android:process=":pedometerservice">-->
             <intent-filter>
                 <action android:name="com.pedometerlibrary.ContentProvider" />
             </intent-filter>
         </provider>
 
         <!-- SharedPreferenceProvider -->
-        <provider
-            android:name="com.msplibrary.SharedPreferenceProvider"
-            android:authorities="com.msplibrary.SharedPreferenceProvider"
-            android:exported="false" />
 
     </application>
 

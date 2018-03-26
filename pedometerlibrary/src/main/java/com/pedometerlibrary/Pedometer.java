@@ -23,10 +23,10 @@ public class Pedometer {
     }
 
     /**
-     * 初始化计步器
+     * 初始化记步器
      *
      * @param application      Application
-     * @param pedometerOptions 计步器选项
+     * @param pedometerOptions 记步器选项
      */
     public static void initialize(Application application, PedometerOptions pedometerOptions) {
         if (!PedometerManager.isIsInitialized()) {
@@ -37,11 +37,11 @@ public class Pedometer {
     }
 
     /**
-     * 初始化自定义计步器
+     * 初始化自定义记步器
      *
      * @param application     Application
-     * @param pedometerAction 计步器服务隐式意图
-     *                        计步器服务必须继承com.pedometerlibrary.service.BasePedometerService
+     * @param pedometerAction 记步器服务隐式意图
+     *                        记步器服务必须继承com.pedometerlibrary.service.BasePedometerService
      */
     public static void initialize(Application application, String pedometerAction) {
         if (!PedometerManager.isIsInitialized()) {

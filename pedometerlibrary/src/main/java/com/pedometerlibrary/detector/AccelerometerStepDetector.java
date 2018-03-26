@@ -169,11 +169,10 @@ public class AccelerometerStepDetector implements SensorEventListener {
     public void start() {
         Sensor accelerationSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         if (accelerationSensor != null) {
-            LogUtil.d(TAG, "Sensor.TYPE_ACCELEROMETER");
             sensor = accelerationSensor;
             boolean isAvailable = sensorManager.registerListener(this, accelerationSensor, SensorManager.SENSOR_DELAY_FASTEST);
             if (!isAvailable) {
-                LogUtil.d(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
+                LogUtil.d(TAG, "Sensor.TYPE_ACCELEROMETER");
             }
             if (stepListener != null) {
                 stepListener.onStep(currentAppStep);
@@ -223,8 +222,8 @@ public class AccelerometerStepDetector implements SensorEventListener {
             for (int i = 0; i < 3; i++) {
                 ORI_VALUES[i] = event.values[i];
             }
-            gravityNew = (float) Math.sqrt(ORI_VALUES[0] * ORI_VALUES[0]
-                    + ORI_VALUES[1] * ORI_VALUES[1] + ORI_VALUES[2] * ORI_VALUES[2]);
+            gravityNew = (float) Math.sqrt(ORI_VALUES[0] * ORI_VALUES[0] +
+                    ORI_VALUES[1] * ORI_VALUES[1] + ORI_VALUES[2] * ORI_VALUES[2]);
             detectorNewStep(gravityNew);
         }
     }
@@ -235,7 +234,7 @@ public class AccelerometerStepDetector implements SensorEventListener {
     }
 
     /**
-     * 检测步子，并开始计步
+     * 检测步子，并开始记步
      * 1.传入sersor中的数据
      * 2.如果检测到了波峰，并且符合时间差以及阈值的条件，则判定为1步
      * 3.符合时间差条件，波峰波谷差值大于initialValue，则将该差值纳入阈值的计算中
@@ -247,13 +246,13 @@ public class AccelerometerStepDetector implements SensorEventListener {
             if (detectorPeak(values, gravityOld)) {
                 timeOfLastPeak = timeOfThisPeak;
                 timeOfNow = System.currentTimeMillis();
-                if (timeOfNow - timeOfLastPeak >= timeInterval
-                        && (peakOfWave - valleyOfWave >= ThreadValue)) {
+                if (timeOfNow - timeOfLastPeak >= timeInterval &&
+                        (peakOfWave - valleyOfWave >= ThreadValue)) {
                     timeOfThisPeak = timeOfNow;
                     detectorValidStep();
                 }
-                if (timeOfNow - timeOfLastPeak >= timeInterval
-                        && (peakOfWave - valleyOfWave >= INITIAL_VALUE)) {
+                if (timeOfNow - timeOfLastPeak >= timeInterval &&
+                        (peakOfWave - valleyOfWave >= INITIAL_VALUE)) {
                     timeOfThisPeak = timeOfNow;
                     ThreadValue = peakValleyThread(peakOfWave - valleyOfWave);
                 }
@@ -264,7 +263,7 @@ public class AccelerometerStepDetector implements SensorEventListener {
 
     /**
      * 有效运动处理
-     * 1.连续记录9才开始计步
+     * 1.连续记录9才开始记步
      * 2.连续记录9步用户停住超过3秒，则前面的记录失效，下次从头开始
      * 3.连续记录了9步用户还在运动，之前的数据才有效
      */
@@ -332,8 +331,7 @@ public class AccelerometerStepDetector implements SensorEventListener {
             isDirectionUp = false;
         }
 
-        if (!isDirectionUp && lastStatus
-                && (continueUpFormerCount >= 2 || oldValue >= 20)) {
+        if (!isDirectionUp && lastStatus && (continueUpFormerCount >= 2 || oldValue >= 20)) {
             peakOfWave = oldValue;
             return true;
         } else if (!lastStatus && isDirectionUp) {

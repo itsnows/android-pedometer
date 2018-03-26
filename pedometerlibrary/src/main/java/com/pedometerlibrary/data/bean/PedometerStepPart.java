@@ -7,7 +7,7 @@ import java.io.Serializable;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/12 15:09
  * <p>
- * 计步器记步部分
+ * 记步器记步部分
  */
 public class PedometerStepPart implements Serializable {
 

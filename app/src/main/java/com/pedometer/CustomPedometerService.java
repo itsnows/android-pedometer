@@ -49,12 +49,12 @@ public class CustomPedometerService extends BasePedometerService {
     private int target;
 
     /**
-     * 计步器服务广播
+     * 记步器服务广播
      */
     private PedometerServiceReceive pedometerServiceReceive;
 
     /**
-     * 计步器进程通信接口
+     * 记步器进程通信接口
      */
 //    private IPedometerAidlInterface.Stub iPedometerAidlInterface = new IPedometerAidlInterface.Stub() {
 //        @Override
@@ -166,7 +166,7 @@ public class CustomPedometerService extends BasePedometerService {
     }
 
     /**
-     * 计步器服务广播
+     * 记步器服务广播
      */
     private class PedometerServiceReceive extends BroadcastReceiver {
 

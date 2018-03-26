@@ -11,7 +11,7 @@ interface IPedometerService {
     void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat,
             double aDouble, String aString);
 
-    // 计步器步数（返回-1不支持计步器功能，否则返回计步器记录总步数）
+    // 记步器步数（返回-1不支持记步器功能，否则返回记步器记录总步数）
     int onStep();
 
     // 设置目标

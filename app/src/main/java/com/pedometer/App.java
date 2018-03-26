@@ -32,7 +32,7 @@ public class App extends Application {
     }
 
     /**
-     * 默认计步器
+     * 默认记步器
      */
     private void initDefault() {
         Pedometer.initialize(this,
@@ -53,7 +53,7 @@ public class App extends Application {
     }
 
     /**
-     * 自定义计步器
+     * 自定义记步器
      */
     private void initCustom() {
         Pedometer.initialize(this, CustomPedometerService.ACTION);

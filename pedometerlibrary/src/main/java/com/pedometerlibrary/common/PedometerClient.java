@@ -22,53 +22,50 @@ import java.lang.ref.WeakReference;
  * E-mail: xue.com.fei@outlook.com
  * CreatedTime: 2018/3/20 14:11
  * <p>
- * 计步客户端
+ * 记步客户端
  */
 public class PedometerClient {
     private Activity activity;
     private PedometerService.CallBack callBack;
-
     /**
-     * 远程服务端
+     * 记步服务连接
+     */
+    private PedometerServiceConnection connection;
+    /**
+     * 记步服务端
      */
     private Messenger serverMessenger;
-
     /**
      * 记步客服端
      */
     private Messenger clientMessenger;
-
     /**
      * 连接状态
      */
     private boolean isConnect;
 
-    /**
-     * 服务连接
-     */
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            serverMessenger = new Messenger(service);
-            connectServer();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            serverMessenger = null;
-        }
-    };
-
     private PedometerClient(Activity activity, PedometerService.CallBack callBack) {
         this.activity = activity;
         this.callBack = callBack;
-        Intent intent = IntentUtil.createExplicitFromImplicitIntent(activity, new Intent(PedometerService.ACTION));
-        activity.bindService(intent, serviceConnection, Context.BIND_ABOVE_CLIENT);
 
-        ClientHanlder clientHanlder = new ClientHanlder(this);
-        clientMessenger = new Messenger(clientHanlder);
+        if (connection == null) {
+            connection = new PedometerServiceConnection();
+        }
+
+        if (clientMessenger == null) {
+            ClientHanlder clientHanlder = new ClientHanlder(this);
+            clientMessenger = new Messenger(clientHanlder);
+        }
+        bindServer();
     }
 
+    /**
+     * 添加客服端
+     *
+     * @param activity Activity
+     * @param callBack PedometerService.CallBack
+     * @return 记步客服端
+     */
     public static PedometerClient add(Activity activity, PedometerService.CallBack callBack) {
         if (activity == null) {
             throw new IllegalArgumentException("Context can not be null");
@@ -76,10 +73,18 @@ public class PedometerClient {
         return new PedometerClient(activity, callBack);
     }
 
+    /**
+     * 同步数据
+     */
     public void sync() {
 
     }
 
+    /**
+     * 设置目标
+     *
+     * @param target
+     */
     public void target(int target) {
         if (activity == null) {
             if (callBack != null) {
@@ -90,23 +95,34 @@ public class PedometerClient {
         activity.sendBroadcast(new Intent(PedometerService.ACTION_TARGET));
     }
 
+    /**
+     * 移除记步客服端
+     */
     public void remove() {
         if (isConnect && serverMessenger != null) {
             disconnectServer();
         }
 
-        if (activity != null && serviceConnection != null) {
-            activity.unbindService(serviceConnection);
+        if (activity != null && connection != null) {
+            unbindServer();
         }
     }
 
     /**
-     * 当前是否连接记步服务
+     * 是否连接记步服务
      *
      * @return
      */
     public boolean isConnect() {
         return isConnect;
+    }
+
+    /**
+     * 绑定记步服务
+     */
+    private void bindServer() {
+        Intent intent = IntentUtil.createExplicitFromImplicitIntent(activity, new Intent(PedometerService.ACTION));
+        activity.bindService(intent, connection, Context.BIND_ABOVE_CLIENT);
     }
 
     /**
@@ -140,6 +156,30 @@ public class PedometerClient {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * 解绑记步服务
+     */
+    private void unbindServer() {
+        activity.unbindService(connection);
+    }
+
+    /**
+     * 记步器服务连接
+     */
+    private class PedometerServiceConnection implements ServiceConnection {
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            serverMessenger = new Messenger(service);
+            connectServer();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            connection = null;
+        }
     }
 
     /**

@@ -24,9 +24,9 @@ import java.lang.ref.SoftReference;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class PedometerJobService extends JobService {
-    private static final String TAG = PedometerJobService.class.getSimpleName();
     public static final int JOB_REBOOT_ID = 0x1201;
     public static final int JOB_MIDNIGHT_ID = 0x1520;
+    private static final String TAG = PedometerJobService.class.getSimpleName();
     /**
      * 任务处理
      */

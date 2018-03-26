@@ -5,7 +5,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.pedometerlibrary.common.PedometerParam;
@@ -57,9 +56,9 @@ public class StepDetector implements SensorEventListener {
     private boolean systemRebootStatus;
 
     /**
-     * 是否重置记录
+     * 是否重置数据
      */
-    private boolean isReset;
+    private boolean isResetStep;
 
     /**
      * 传感器管理
@@ -108,23 +107,21 @@ public class StepDetector implements SensorEventListener {
      * 启动步测器（API 步测器）
      */
     public void start() {
-        // Sensor.TYPE_STEP_COUNTER 开机被激活后统计步数，重启手机后该数据清空 每次返回统计步数
+        // Sensor.TYPE_STEP_COUNTER 开机被激活后统记步数，重启手机后该数据清空 每次返回统记步数
         Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
         // Sensor.TYPE_STEP_DETECTOR 临时步数，每次返回1.0
         Sensor detectorSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
         if (countSensor != null) {
-            LogUtil.v(TAG, "Sensor.TYPE_STEP_COUNTER");
             sensor = countSensor;
             boolean isAvailable = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!isAvailable) {
-                LogUtil.v(TAG, "Sensor.TYPE_STEP_COUNTER unavailable");
+            if (isAvailable) {
+                LogUtil.v(TAG, "Sensor.TYPE_STEP_COUNTER");
             }
         } else if (detectorSensor != null) {
-            LogUtil.v(TAG, "Sensor.TYPE_STEP_DETECTOR");
             sensor = detectorSensor;
             boolean isAvailable = sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-            if (!isAvailable) {
-                LogUtil.v(TAG, "Sensor.TYPE_STEP_DETECTOR unavailable");
+            if (isAvailable) {
+                LogUtil.v(TAG, "Sensor.TYPE_STEP_DETECTOR");
             }
             if (stepListener != null) {
                 stepListener.onStep(currentAppStep);
@@ -160,10 +157,12 @@ public class StepDetector implements SensorEventListener {
      */
     private boolean isResetStep() {
         if (DateUtil.differentDays(lastSensorTime, DateUtil.getSystemTime()) > 0) {
-            return true;
+            isResetStep = true;
+            return isResetStep;
         }
         if (DateUtil.isMidnightTime(new Date())) {
-            return true;
+            isResetStep = true;
+            return isResetStep;
         }
         return false;
     }
@@ -181,42 +180,44 @@ public class StepDetector implements SensorEventListener {
     public void onSensorChanged(SensorEvent event) {
         int sensorType = sensor.getType();
         if (sensorType == Sensor.TYPE_STEP_COUNTER) {
-            int tempStep = (int) event.values[0];
-            LogUtil.e(TAG, "System Step：" + tempStep);
+            int systemStep = (int) event.values[0];
+            LogUtil.e(TAG, "System Step：" + systemStep);
             if (isResetStep()) {
+                isResetStep = false;
                 currentAppStep = 0;
-                lastOffsetStep = tempStep;
+                lastOffsetStep = systemStep;
                 systemBootTime = DateUtil.getSystemBootTime();
-                PedometerParam.setLastOffsetStep(context, lastOffsetStep);
+                systemRebootStatus = false;
                 PedometerParam.setCurrentAppStep(context, currentAppStep);
+                PedometerParam.setLastOffsetStep(context, lastOffsetStep);
                 PedometerParam.setSystemBootTime(context, systemBootTime);
                 LogUtil.e(TAG, "执行重置操作");
             }
 
             if (isSystemReboot()) {
-                lastOffsetStep = tempStep - currentAppStep;
-                systemRebootStatus = false;
+                lastOffsetStep = systemStep - currentAppStep;
                 systemBootTime = DateUtil.getSystemBootTime();
+                systemRebootStatus = false;
                 PedometerParam.setLastOffsetStep(context, lastOffsetStep);
                 PedometerParam.setSystemBootTime(context, systemBootTime);
                 PedometerParam.setSystemRebootStatus(context, systemRebootStatus);
                 LogUtil.e(TAG, "执行重启操作");
             }
 
-            int currentStep = tempStep - lastOffsetStep;
-            if (currentStep < currentAppStep) {
-                lastOffsetStep = tempStep - currentAppStep;
+            int tempStep = systemStep - lastOffsetStep;
+            if (tempStep < currentAppStep) {
+                lastOffsetStep = systemStep - currentAppStep;
                 PedometerParam.setLastOffsetStep(context, lastOffsetStep);
             } else {
-                currentAppStep = currentStep;
+                currentAppStep = tempStep;
             }
-            lastSensorStep = tempStep;
-            lastSensorTime = DateUtil.getSystemTime();
             if (currentAppStep < 0) {
                 currentAppStep = 0;
                 lastOffsetStep = currentAppStep;
                 PedometerParam.setLastOffsetStep(context, lastOffsetStep);
             }
+            lastSensorStep = systemStep;
+            lastSensorTime = DateUtil.getSystemTime();
             PedometerParam.setCurrentAppStep(context, currentAppStep);
             PedometerParam.setLastSensorStep(context, lastSensorStep);
             PedometerParam.setLastSensorTime(context, lastSensorTime);
@@ -225,10 +226,9 @@ public class StepDetector implements SensorEventListener {
             }
         } else if (sensorType == Sensor.TYPE_STEP_DETECTOR) {
             if (event.values[0] == 1.0) {
-                if (isReset) {
-                    isReset = false;
-                    lastSensorTime = DateUtil.getSystemTime();
+                if (isResetStep()) {
                     currentAppStep = 0;
+                    lastSensorTime = DateUtil.getSystemTime();
                 }
                 currentAppStep++;
                 lastSensorTime = DateUtil.getSystemTime();
@@ -250,7 +250,6 @@ public class StepDetector implements SensorEventListener {
      * 步测器回调接口
      */
     public interface StepListener {
-
         void onStep(int step);
 
         void onNotSupported();
